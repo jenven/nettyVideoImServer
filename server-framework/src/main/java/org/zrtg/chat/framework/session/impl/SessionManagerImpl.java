@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.directwebremoting.ScriptSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.dwrmanage.DwrUtil;
 import org.zrtg.chat.common.model.MessageWrapper;
@@ -19,10 +21,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class SessionManagerImpl implements SessionManager
 {
 
     private final static Logger log = LoggerFactory.getLogger(SessionManagerImpl.class);
+
+    @Autowired
     private MessageProxy proxy;
     
     public void setProxy(MessageProxy proxy) {

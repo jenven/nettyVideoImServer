@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.dwrmanage.DwrUtil;
 import org.zrtg.chat.common.model.MessageWrapper;
@@ -18,11 +20,15 @@ import org.zrtg.chat.server.connertor.ImConnertor;
 
 import java.util.List;
 
+@Service
 public class ImConnertorImpl implements ImConnertor
 {
 	private final static Logger log = LoggerFactory.getLogger(ImConnertorImpl.class);
 
+	@Autowired
     private SessionManagerImpl sessionManager;
+
+	@Autowired
     private MessageProxy proxy;
 
 	public void setSessionManager(SessionManagerImpl sessionManager) {

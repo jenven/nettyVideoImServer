@@ -23,6 +23,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.proto.MessageProto;
@@ -41,9 +42,13 @@ public class ImWebsocketServer  {
     private final static Logger log = LoggerFactory.getLogger(ImWebsocketServer.class);
     
     private ProtobufDecoder decoder = new ProtobufDecoder(MessageProto.Model.getDefaultInstance());
-    
+
+    @Autowired
     private MessageProxy proxy = null;
-    private ImConnertorImpl connertor; 
+
+    @Autowired
+    private ImConnertorImpl connertor;
+
     private int port = 1314;
  
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();

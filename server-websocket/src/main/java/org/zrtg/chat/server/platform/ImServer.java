@@ -12,6 +12,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.proto.MessageProto;
@@ -30,8 +31,9 @@ public class ImServer  {
     private ProtobufDecoder decoder = new ProtobufDecoder(MessageProto.Model.getDefaultInstance());
     private ProtobufEncoder encoder = new ProtobufEncoder();
     
-    
+    @Autowired
     private MessageProxy proxy;
+    @Autowired
     private ImConnertorImpl connertor;
     private int port = 2001;
  

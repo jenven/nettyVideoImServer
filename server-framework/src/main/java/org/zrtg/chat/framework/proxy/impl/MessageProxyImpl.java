@@ -7,6 +7,8 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.domain.UserMessageEntity;
 import org.zrtg.chat.common.model.MessageWrapper;
@@ -18,10 +20,12 @@ import org.zrtg.chat.framework.proxy.MessageProxy;
 
 import java.util.Date;
 
+@Service
 public class MessageProxyImpl implements MessageProxy
 {
 	private final static Logger log = LoggerFactory.getLogger(MessageProxyImpl.class);
-	
+
+	@Autowired
 	private RebotProxy rebotProxy;
 	@Autowired
 	private IUserMessageService userMessageServiceImpl;

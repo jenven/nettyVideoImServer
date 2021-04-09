@@ -9,6 +9,7 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.MessageWrapper;
 import org.zrtg.chat.common.model.proto.MessageProto;
@@ -57,6 +58,8 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageProto.Model message)
 			throws Exception {
+
+          log.info("recive message:{}",message);
 		  try {
 			   String sessionId = connertor.getChannelSessionId(ctx);
                 // inbound
@@ -104,7 +107,8 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
         super.channelInactive(ctx);
         log.debug("ImWebSocketServerHandler channelInactive from (" + ImUtils.getRemoteAddress(ctx) + ")");
         String sessionId = connertor.getChannelSessionId(ctx);
-        receiveMessages(ctx,new MessageWrapper(MessageWrapper.MessageProtocol.CLOSE, sessionId,null, null));  
+        log.debug("ImWebSocketServerHandler channel sessionId (" + sessionId + ")");
+        receiveMessages(ctx,new MessageWrapper(MessageWrapper.MessageProtocol.CLOSE, sessionId,null, null));
     }
 
     @Override
