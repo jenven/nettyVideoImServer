@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>单聊</title>
+	<link type="text/css" rel="stylesheet" href="css/im.css"/> 
+	<link rel="stylesheet" href="layui/css/layui.css">
+	<script type="text/javascript" src="js/util.js"></script>  
+	<script type="text/javascript" src="js/message.js"></script>  
+	<script type="text/javascript" src="js/messagebody.js"></script> 
+  </head>
+  <body>
+	<div id="msg"></div>
+	<input type="text" id="text">
+	<input type="submit" value="send" onclick="send()">
+   </body>
+   <script src="js/websocketconfig.js"></script> 
+   <script>
+       var sendMsgFrame = document.getElementById("msg");
+	   var currentsession = "123456789";
+	   
+	   function send() {
+          var text = document.getElementById("text").value
+          sendMsg("987654321",text);
+       }
+	   
+	   //回复消息
+	  var reMsg=function(sender,time,msg){
+		
+	       sendMsgFrame.innerHTML += "<br>" + msg;
+		   sendMsg(sender,"收到消息了")
+	  }
+	   
+	    //发送消息
+      var sendMsg=function(reuser,msg){ 
+    	  var message = new proto.Model(); 
+      	  var content = new proto.MessageBody();
+           message.setMsgtype(4);
+           message.setCmd(5);
+           message.setToken(currentsession);  
+           message.setSender(currentsession);
+           message.setReceiver(reuser);//机器人ID默认为0
+           content.setContent(msg);
+           content.setType(0)
+           message.setContent(content.serializeBinary())
+           socket.send(message.serializeBinary());
+	  }
+	   
+	   var initEventHandle = function () {
+              //收到消息后
+              socket.onmessage = function(event) {
+              	  if (event.data instanceof ArrayBuffer){
+              	       var msg =  proto.Model.deserializeBinary(event.data);      //如果后端发送的是二进制帧（protobuf）会收到前面定义的类型
+					   console.log(msg);
+              	       //心跳消息
+              	       if(msg.getCmd()==2){
+              	    	   //发送心跳回应
+              	    	   var message1 = new proto.Model();
+                           message1.setCmd(2);
+                           message1.setMsgtype(4);
+                           socket.send(message1.serializeBinary());
+              	       }else if(msg.getCmd()==3){
+              	    	  if(msg.getSender()!=currentsession){
+						      sendMsgFrame.innerHTML += "<br>" + "用户"+msg.getSender()+"上线了";
+              	    	  } 
+              	       }else if(msg.getCmd()==4){
+               	    	  if(msg.getSender()!=currentsession){
+                	    		sendMsgFrame.innerHTML += "<br>" + "用户"+msg.getSender()+"下线了";
+                	       }    
+                	   }else if(msg.getCmd()==5){
+					      
+              	    	   //显示非自身消息    
+              	    	   if(msg.getSender()!=currentsession){
+              	    		   //不显示用户组消息
+              	    		   if(msg.getGroupid()==null||msg.getGroupid().length<1){
+              	    			  var msgCon =  proto.MessageBody.deserializeBinary(msg.getContent()); 
+							      console.log(msgCon);
+                  	    	      reMsg(msg.getSender(),msg.getTimestamp(),msgCon.getContent());
+              	    		   } 
+              	    	   }else{
+						      console.log("自身消息");
+						   } 
+              	       }
+              	  }else {
+                        var data = event.data;                //后端返回的是文本帧时触发
+						console.log(data);
+                  } 
+              };
+              //连接后
+              socket.onopen = function(event) {
+            	   var message = new proto.Model();
+            	   var browser=BrowserUtil.info();
+    	   	       message.setVersion("1.0");
+    	   	       message.setDeviceid("")
+    	   	       message.setCmd(1);
+    	   	       message.setSender(currentsession);
+    	   	       message.setMsgtype(1); 
+    	   	       message.setFlag(1);
+    	   	       message.setPlatform(browser.name);
+    	   	       message.setPlatformversion(browser.version);
+    	   	       message.setToken(currentsession);
+				   console.log(message);
+    	   	       var bytes = message.serializeBinary();  
+                   socket.send(bytes);
+              
+              };
+              //连接关闭
+              socket.onclose = function(event) {
+            	  layer.confirm('您已下线，重新上线?', function(index){
+            		  reconnect(websocketurl,initEventHandle); 
+	        		  layer.close(index);
+	        	  }); 
+    	      };
+    	      socket.onerror = function () {
+    	    	  layer.msg("服务器连接出错，请检查websocketconfig.js里面的IP地址");  
+    	          reconnect(websocketurl,initEventHandle);
+    	      }; 
+      }
+	  
+	  
+      createWebSocket(websocketurl,initEventHandle);
+   </script
+</html>
