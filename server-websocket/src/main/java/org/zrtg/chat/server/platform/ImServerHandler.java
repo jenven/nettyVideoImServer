@@ -64,6 +64,7 @@ public class ImServerHandler  extends ChannelInboundHandlerAdapter{
             if (o instanceof MessageProto.Model) {
                 MessageProto.Model message = (MessageProto.Model) o;
                 String sessionId = connertor.getChannelSessionId(ctx);
+                log.info("sessionId:{}",sessionId);
                 // inbound
                 if (message.getMsgtype() == Constants.ProtobufType.SEND) {
                 	ctx.channel().attr(Constants.SessionConfig.SERVER_SESSION_HEARBEAT).set(System.currentTimeMillis());
