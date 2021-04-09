@@ -1,26 +1,42 @@
 package org.zrtg.chat.common.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.zrtg.chat.common.base.model.BaseModel;
+
+import java.io.Serializable;
 
 
 /**
  *
  */
 @TableName("user_message")
-public class UserMessageEntity extends BaseModel
+public class UserMessageEntity implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	
- 
+
+	@TableId(type = IdType.AUTO)
+	private Long id;
 	//发送人
 	private String senduser;
 	//发送人昵称或姓名
 	private String sendusername;
 	//发送人头像
 	private String avatar;
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
 	//接收人
 	private String receiveuser;
 	//群ID
@@ -31,8 +47,43 @@ public class UserMessageEntity extends BaseModel
 	private Integer type=0;
 	//消息内容
 	private String content;
- 
- 
+
+	private Long createuser;
+
+	private String createdate="";
+
+	private String updatedate="";
+
+	public Long getCreateuser()
+	{
+		return createuser;
+	}
+
+	public void setCreateuser(Long createuser)
+	{
+		this.createuser = createuser;
+	}
+
+	public String getCreatedate()
+	{
+		return createdate;
+	}
+
+	public void setCreatedate(String createdate)
+	{
+		this.createdate = createdate;
+	}
+
+	public String getUpdatedate()
+	{
+		return updatedate;
+	}
+
+	public void setUpdatedate(String updatedate)
+	{
+		this.updatedate = updatedate;
+	}
+
 	public String getSendusername() {
 		return sendusername;
 	}

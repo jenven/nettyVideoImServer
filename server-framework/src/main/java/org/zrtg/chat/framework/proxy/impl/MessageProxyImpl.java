@@ -128,6 +128,7 @@ public class MessageProxyImpl implements MessageProxy
             	userMessage.setContent(msgConten.getContent());
             	userMessage.setGroupid(msg.getGroupId());
             	userMessage.setCreatedate(msg.getTimeStamp());
+            	userMessage.setUpdatedate(msg.getTimeStamp());
             	userMessage.setIsread(1);
             	return userMessage;
     		}
