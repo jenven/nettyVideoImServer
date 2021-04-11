@@ -20,11 +20,15 @@ import org.zrtg.chat.framework.session.impl.SessionManagerImpl;
 import org.zrtg.chat.server.connertor.ImConnertor;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class ImConnertorImpl implements ImConnertor
 {
 	private final static Logger log = LoggerFactory.getLogger(ImConnertorImpl.class);
+
+	private static Map<String, String> UN_AUTH_SESSIONS = new ConcurrentHashMap<String, String>();
 
 	@Autowired
     private SessionManagerImpl sessionManager;
@@ -169,24 +173,33 @@ public class ImConnertorImpl implements ImConnertor
     @Override
     public void connect(ChannelHandlerContext ctx, MessageWrapper wrapper) {
         try {
+
+			  String sessionId0 = getChannelSessionId(ctx);
         	  String sessionId = wrapper.getSessionId();
-        	  if (sessionId.isEmpty()){
-        	  	  sessionId = SessionUtils.getSessionId();
-				  wrapper.setSessionId(sessionId);
+        	  if (sessionId0.isEmpty()){
+				  throw new Exception("ChannelSessionId has not existed");
 			  }
-        	  String sessionId0 = getChannelSessionId(ctx);
+
         	  //当sessionID存在或者相等  视为同一用户重新连接
-              if (StringUtils.isNotEmpty(sessionId0) || sessionId.equals(sessionId0)) {
+              if (sessionId.equals(sessionId0)) {
                   log.info("connector reconnect sessionId -> " + sessionId + ", ctx -> " + ctx.toString());
                   pushMessage(proxy.getReConnectionStateMsg(sessionId0));
               } else {
+
+              	  wrapper.setSessionId(sessionId0);
+
                   log.info("connector connect sessionId -> " + sessionId + ", sessionId0 -> " + sessionId0 + ", ctx -> " + ctx.toString());
                   sessionManager.createSession(wrapper, ctx);
-                  setChannelSessionId(ctx, sessionId);
+                  //setChannelSessionId(ctx, sessionId);
                   log.info("create channel attr sessionId " + sessionId + " successful, ctx -> " + ctx.toString());
+                  //这里当做认证(最好校验key和签名)
+				  if (isAuth(wrapper)){
+					  removeUnAuthSessionId(sessionId0);
+				  }
+
               }
         } catch (Exception e) {
-        	log.error("connector connect  Exception.", e);
+        	log.error("connector connect  Exception:{}", e.getMessage());
         }
     }
      
@@ -199,9 +212,55 @@ public class ImConnertorImpl implements ImConnertor
         return ctx.channel().attr(Constants.SessionConfig.SERVER_SESSION_ID).get();
     }
 
-    private void setChannelSessionId(ChannelHandlerContext ctx, String sessionId) {
+	@Override
+	public void removeUnAuthSessionId(String sessionId)
+	{
+		UN_AUTH_SESSIONS.remove(sessionId);
+	}
+
+	@Override
+	public void closeIfNotAuth(String sessionId)
+	{
+		if (UN_AUTH_SESSIONS.containsKey(sessionId)){
+			close(sessionId);
+			removeUnAuthSessionId(sessionId);
+		}
+	}
+
+	@Override
+	public void createChannelSessionId(ChannelHandlerContext ctx)
+	{
+		try{
+			String sessionId0 = getChannelSessionId(ctx);
+			if (StringUtils.isEmpty(sessionId0)){
+				sessionId0 = SessionUtils.getSessionId();
+				setChannelSessionId(ctx, sessionId0);
+				//将 sessionId 存入未验证的map中
+				UN_AUTH_SESSIONS.computeIfAbsent(sessionId0,k-> "1");
+			}else {
+				throw new Exception("ChannelSessionId has existed");
+			}
+		}catch (Exception e){
+			log.error(" createChannelSessionId  Exception: {}", e.getMessage());
+		}
+	}
+
+	private void setChannelSessionId(ChannelHandlerContext ctx, String sessionId) {
         ctx.channel().attr(Constants.SessionConfig.SERVER_SESSION_ID).set(sessionId);
     }
 
+	/**
+	 * 校验签名
+	 * @param wrapper
+	 * @return
+	 */
+	private boolean isAuth(MessageWrapper wrapper){
+
+		/**
+		 * TODO 签名校验
+		 */
+
+		return true;
+	}
 
 }

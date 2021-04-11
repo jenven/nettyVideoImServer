@@ -103,6 +103,8 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         log.debug("ImWebSocketServerHandler channelActive from (" + ImUtils.getRemoteAddress(ctx) + ")");
+        //为channel创建sessionid
+        connertor.createChannelSessionId(ctx);
         //设置一个定时器
         ctx.executor().schedule(new ConnectionTerminator(ctx), 30, TimeUnit.SECONDS);
     }
@@ -119,6 +121,10 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.warn("ImWebSocketServerHandler (" + ImUtils.getRemoteAddress(ctx) + ") -> Unexpected exception from downstream." + cause);
+        String sessionId = connertor.getChannelSessionId(ctx);
+        if (!sessionId.isEmpty()){
+            connertor.removeUnAuthSessionId(sessionId);
+        }
     }
 
 
@@ -161,6 +167,13 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
         {
             String sessionId = connertor.getChannelSessionId(this.ctx);
             log.debug("timer run sessionid:{}",sessionId);
+            if (sessionId.isEmpty()){//说明没有发送连接命令
+                this.ctx.close();
+            }else {
+                //判断有没有认证
+                connertor.closeIfNotAuth(sessionId);
+            }
+
         }
     }
 }
