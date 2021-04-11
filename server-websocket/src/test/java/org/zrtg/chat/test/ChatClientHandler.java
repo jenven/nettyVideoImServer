@@ -34,7 +34,6 @@ public class ChatClientHandler  extends ChannelInboundHandlerAdapter
         }else if(message.getCmd()==Constants.CmdType.MESSAGE){
             MessageBodyProto.MessageBody  content =  MessageBodyProto.MessageBody.parseFrom(message.getContent()) ;
             logger.info(message.getSender()+" 回复我 :" + content.getContent());
-            System.out.println(message.getSender()+" 回复我 :" + content.getContent());
         }
 
 

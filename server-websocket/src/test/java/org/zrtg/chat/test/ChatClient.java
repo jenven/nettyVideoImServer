@@ -15,6 +15,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.proto.MessageProto;
+import org.zrtg.chat.common.utils.SessionUtils;
 import org.zrtg.chat.test.data.MessageData;
 
 import java.util.Scanner;
@@ -78,7 +79,7 @@ public class ChatClient
     public static void main(String[] args) throws Exception {
         try {
             //String currentuser = "abc";
-            String currentuser = UUID.randomUUID().toString().replaceAll("-", "");
+            String currentuser = "";
             //链接socket服务
             ChatClient client =    new ChatClient();
             client.connect(new MessageData().generateConnect(currentuser));

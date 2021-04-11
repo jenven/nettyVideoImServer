@@ -16,6 +16,9 @@ import org.zrtg.chat.common.model.proto.MessageProto;
 import org.zrtg.chat.common.utils.ImUtils;
 import org.zrtg.chat.framework.proxy.MessageProxy;
 import org.zrtg.chat.server.connertor.impl.ImConnertorImpl;
+import org.zrtg.chat.server.platform.ImServerHandler;
+
+import java.util.concurrent.TimeUnit;
 
 @Sharable
 public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<MessageProto.Model>{
@@ -59,7 +62,7 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
 	protected void channelRead0(ChannelHandlerContext ctx, MessageProto.Model message)
 			throws Exception {
 
-          log.info("recive message:{}",message);
+          log.info("websocket server recive message:{}",message);
 		  try {
 			   String sessionId = connertor.getChannelSessionId(ctx);
                 // inbound
@@ -100,6 +103,8 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         log.debug("ImWebSocketServerHandler channelActive from (" + ImUtils.getRemoteAddress(ctx) + ")");
+        //设置一个定时器
+        ctx.executor().schedule(new ConnectionTerminator(ctx), 30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -142,5 +147,20 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
         } else if (wrapper.isReply()) {
         	connertor.pushMessage(wrapper.getSessionId(),wrapper);
         }  
+    }
+
+    private class ConnectionTerminator implements Runnable{
+        ChannelHandlerContext ctx;
+        public ConnectionTerminator(ChannelHandlerContext ctx) {
+            // TODO Auto-generated constructor stub
+            this.ctx = ctx;
+        }
+
+        @Override
+        public void run()
+        {
+            String sessionId = connertor.getChannelSessionId(this.ctx);
+            log.debug("timer run sessionid:{}",sessionId);
+        }
     }
 }

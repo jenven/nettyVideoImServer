@@ -12,6 +12,7 @@ import org.zrtg.chat.common.dwrmanage.DwrUtil;
 import org.zrtg.chat.common.model.MessageWrapper;
 import org.zrtg.chat.common.model.Session;
 import org.zrtg.chat.common.model.proto.MessageProto;
+import org.zrtg.chat.common.utils.SessionUtils;
 import org.zrtg.chat.framework.exception.PushException;
 import org.zrtg.chat.framework.group.ImChannelGroup;
 import org.zrtg.chat.framework.proxy.MessageProxy;
@@ -169,6 +170,10 @@ public class ImConnertorImpl implements ImConnertor
     public void connect(ChannelHandlerContext ctx, MessageWrapper wrapper) {
         try {
         	  String sessionId = wrapper.getSessionId();
+        	  if (sessionId.isEmpty()){
+        	  	  sessionId = SessionUtils.getSessionId();
+				  wrapper.setSessionId(sessionId);
+			  }
         	  String sessionId0 = getChannelSessionId(ctx);
         	  //当sessionID存在或者相等  视为同一用户重新连接
               if (StringUtils.isNotEmpty(sessionId0) || sessionId.equals(sessionId0)) {

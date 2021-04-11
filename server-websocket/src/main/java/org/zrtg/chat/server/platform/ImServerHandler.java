@@ -15,6 +15,8 @@ import org.zrtg.chat.common.utils.ImUtils;
 import org.zrtg.chat.framework.proxy.MessageProxy;
 import org.zrtg.chat.server.connertor.impl.ImConnertorImpl;
 
+import java.util.concurrent.TimeUnit;
+
 @Sharable
 public class ImServerHandler  extends ChannelInboundHandlerAdapter{
     private final static Logger log = LoggerFactory.getLogger(ImServerHandler.class);
@@ -60,11 +62,11 @@ public class ImServerHandler  extends ChannelInboundHandlerAdapter{
     
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object o) throws Exception {
+        log.info("socket server recive message:{}",o);
         try {
             if (o instanceof MessageProto.Model) {
                 MessageProto.Model message = (MessageProto.Model) o;
                 String sessionId = connertor.getChannelSessionId(ctx);
-                log.info("sessionId:{}",sessionId);
                 // inbound
                 if (message.getMsgtype() == Constants.ProtobufType.SEND) {
                 	ctx.channel().attr(Constants.SessionConfig.SERVER_SESSION_HEARBEAT).set(System.currentTimeMillis());
@@ -103,6 +105,8 @@ public class ImServerHandler  extends ChannelInboundHandlerAdapter{
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         log.debug("ImServerHandler channelActive from (" + ImUtils.getRemoteAddress(ctx) + ")");
+        //设置一个定时器
+        ctx.executor().schedule(new ConnectionTerminator(ctx), 30, TimeUnit.SECONDS);
     }
 
     @Override
@@ -146,7 +150,21 @@ public class ImServerHandler  extends ChannelInboundHandlerAdapter{
         }  
     }
 
-   
+    private class ConnectionTerminator implements Runnable{
+        ChannelHandlerContext ctx;
+        public ConnectionTerminator(ChannelHandlerContext ctx) {
+            // TODO Auto-generated constructor stub
+            this.ctx = ctx;
+        }
 
-    
+        @Override
+        public void run()
+        {
+            String sessionId = connertor.getChannelSessionId(this.ctx);
+            log.debug("timer run sessionid:{}",sessionId);
+        }
+    }
+
+
+
 }
