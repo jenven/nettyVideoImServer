@@ -144,6 +144,7 @@ public class ImConnertorImpl implements ImConnertor
 	      		if (session != null) {
 	      			sessionManager.removeSession(sessionId,nid); 
 	      			ImChannelGroup.remove(hander.channel());
+	      			removeUnAuthSessionId(sessionId);
 	      		  log.info("connector close sessionId -> " + sessionId + " success " );
 	      		}
 	        } catch (Exception e) {
