@@ -153,6 +153,16 @@ public class MessageProxyImpl implements MessageProxy
 		return result.build();
 	}
 
+	@Override
+	public MessageProto.Model getSelfOnLineStateMsg(String sessionId)
+	{
+		MessageProto.Model.Builder  result = MessageProto.Model.newBuilder();
+		result.setTimeStamp(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+		result.setSender(sessionId);//存入发送人sessionId
+		result.setReceiver(sessionId);//存入接收人sessionId
+		result.setCmd(Constants.CmdType.ONLINE);
+		return result.build();
+	}
 
 
 	@Override

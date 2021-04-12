@@ -98,6 +98,42 @@ public final class MessageBodyProto {
      */
     com.google.protobuf.ByteString
         getExtendBytes();
+
+    /**
+     * <pre>
+     *消息发送人名称
+     * </pre>
+     *
+     * <code>string username = 6;</code>
+     */
+    String getUsername();
+    /**
+     * <pre>
+     *消息发送人名称
+     * </pre>
+     *
+     * <code>string username = 6;</code>
+     */
+    com.google.protobuf.ByteString
+        getUsernameBytes();
+
+    /**
+     * <pre>
+     *消息发送人昵称
+     * </pre>
+     *
+     * <code>string nickname = 7;</code>
+     */
+    String getNickname();
+    /**
+     * <pre>
+     *消息发送人昵称
+     * </pre>
+     *
+     * <code>string nickname = 7;</code>
+     */
+    com.google.protobuf.ByteString
+        getNicknameBytes();
   }
   /**
    * Protobuf type {@code org.zrtg.chat.common.model.proto.MessageBody}
@@ -117,6 +153,8 @@ public final class MessageBodyProto {
       time_ = "";
       type_ = 0;
       extend_ = "";
+      username_ = "";
+      nickname_ = "";
     }
 
     @Override
@@ -174,6 +212,18 @@ public final class MessageBodyProto {
               String s = input.readStringRequireUtf8();
 
               extend_ = s;
+              break;
+            }
+            case 50: {
+              String s = input.readStringRequireUtf8();
+
+              username_ = s;
+              break;
+            }
+            case 58: {
+              String s = input.readStringRequireUtf8();
+
+              nickname_ = s;
               break;
             }
           }
@@ -381,6 +431,90 @@ public final class MessageBodyProto {
       }
     }
 
+    public static final int USERNAME_FIELD_NUMBER = 6;
+    private volatile Object username_;
+    /**
+     * <pre>
+     *消息发送人名称
+     * </pre>
+     *
+     * <code>string username = 6;</code>
+     */
+    public String getUsername() {
+      Object ref = username_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        username_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *消息发送人名称
+     * </pre>
+     *
+     * <code>string username = 6;</code>
+     */
+    public com.google.protobuf.ByteString
+        getUsernameBytes() {
+      Object ref = username_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        username_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int NICKNAME_FIELD_NUMBER = 7;
+    private volatile Object nickname_;
+    /**
+     * <pre>
+     *消息发送人昵称
+     * </pre>
+     *
+     * <code>string nickname = 7;</code>
+     */
+    public String getNickname() {
+      Object ref = nickname_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        nickname_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *消息发送人昵称
+     * </pre>
+     *
+     * <code>string nickname = 7;</code>
+     */
+    public com.google.protobuf.ByteString
+        getNicknameBytes() {
+      Object ref = nickname_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        nickname_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -408,6 +542,12 @@ public final class MessageBodyProto {
       if (!getExtendBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, extend_);
       }
+      if (!getUsernameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, username_);
+      }
+      if (!getNicknameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, nickname_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -431,6 +571,12 @@ public final class MessageBodyProto {
       }
       if (!getExtendBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, extend_);
+      }
+      if (!getUsernameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, username_);
+      }
+      if (!getNicknameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, nickname_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -458,6 +604,10 @@ public final class MessageBodyProto {
           == other.getType());
       result = result && getExtend()
           .equals(other.getExtend());
+      result = result && getUsername()
+          .equals(other.getUsername());
+      result = result && getNickname()
+          .equals(other.getNickname());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -479,6 +629,10 @@ public final class MessageBodyProto {
       hash = (53 * hash) + getType();
       hash = (37 * hash) + EXTEND_FIELD_NUMBER;
       hash = (53 * hash) + getExtend().hashCode();
+      hash = (37 * hash) + USERNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getUsername().hashCode();
+      hash = (37 * hash) + NICKNAME_FIELD_NUMBER;
+      hash = (53 * hash) + getNickname().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -618,6 +772,10 @@ public final class MessageBodyProto {
 
         extend_ = "";
 
+        username_ = "";
+
+        nickname_ = "";
+
         return this;
       }
 
@@ -645,6 +803,8 @@ public final class MessageBodyProto {
         result.time_ = time_;
         result.type_ = type_;
         result.extend_ = extend_;
+        result.username_ = username_;
+        result.nickname_ = nickname_;
         onBuilt();
         return result;
       }
@@ -703,6 +863,14 @@ public final class MessageBodyProto {
         }
         if (!other.getExtend().isEmpty()) {
           extend_ = other.extend_;
+          onChanged();
+        }
+        if (!other.getUsername().isEmpty()) {
+          username_ = other.username_;
+          onChanged();
+        }
+        if (!other.getNickname().isEmpty()) {
+          nickname_ = other.nickname_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -1125,6 +1293,184 @@ public final class MessageBodyProto {
         onChanged();
         return this;
       }
+
+      private Object username_ = "";
+      /**
+       * <pre>
+       *消息发送人名称
+       * </pre>
+       *
+       * <code>string username = 6;</code>
+       */
+      public String getUsername() {
+        Object ref = username_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          username_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *消息发送人名称
+       * </pre>
+       *
+       * <code>string username = 6;</code>
+       */
+      public com.google.protobuf.ByteString
+          getUsernameBytes() {
+        Object ref = username_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          username_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *消息发送人名称
+       * </pre>
+       *
+       * <code>string username = 6;</code>
+       */
+      public Builder setUsername(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        username_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *消息发送人名称
+       * </pre>
+       *
+       * <code>string username = 6;</code>
+       */
+      public Builder clearUsername() {
+        
+        username_ = getDefaultInstance().getUsername();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *消息发送人名称
+       * </pre>
+       *
+       * <code>string username = 6;</code>
+       */
+      public Builder setUsernameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        username_ = value;
+        onChanged();
+        return this;
+      }
+
+      private Object nickname_ = "";
+      /**
+       * <pre>
+       *消息发送人昵称
+       * </pre>
+       *
+       * <code>string nickname = 7;</code>
+       */
+      public String getNickname() {
+        Object ref = nickname_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          nickname_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *消息发送人昵称
+       * </pre>
+       *
+       * <code>string nickname = 7;</code>
+       */
+      public com.google.protobuf.ByteString
+          getNicknameBytes() {
+        Object ref = nickname_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          nickname_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *消息发送人昵称
+       * </pre>
+       *
+       * <code>string nickname = 7;</code>
+       */
+      public Builder setNickname(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        nickname_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *消息发送人昵称
+       * </pre>
+       *
+       * <code>string nickname = 7;</code>
+       */
+      public Builder clearNickname() {
+        
+        nickname_ = getDefaultInstance().getNickname();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *消息发送人昵称
+       * </pre>
+       *
+       * <code>string nickname = 7;</code>
+       */
+      public Builder setNicknameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        nickname_ = value;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -1189,10 +1535,11 @@ public final class MessageBodyProto {
   static {
     String[] descriptorData = {
       "\n\034proto/java/MessageBody.proto\022 org.zrtg" +
-      ".chat.common.model.proto\"Y\n\013MessageBody\022" +
+      ".chat.common.model.proto\"}\n\013MessageBody\022" +
       "\r\n\005title\030\001 \001(\t\022\017\n\007content\030\002 \001(\t\022\014\n\004time\030" +
-      "\003 \001(\t\022\014\n\004type\030\004 \001(\r\022\016\n\006extend\030\005 \001(\tB\022B\020M" +
-      "essageBodyProtob\006proto3"
+      "\003 \001(\t\022\014\n\004type\030\004 \001(\r\022\016\n\006extend\030\005 \001(\t\022\020\n\010u" +
+      "sername\030\006 \001(\t\022\020\n\010nickname\030\007 \001(\tB\022B\020Messa" +
+      "geBodyProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1211,7 +1558,7 @@ public final class MessageBodyProto {
     internal_static_org_zrtg_chat_common_model_proto_MessageBody_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_zrtg_chat_common_model_proto_MessageBody_descriptor,
-        new String[] { "Title", "Content", "Time", "Type", "Extend", });
+        new String[] { "Title", "Content", "Time", "Type", "Extend", "Username", "Nickname", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

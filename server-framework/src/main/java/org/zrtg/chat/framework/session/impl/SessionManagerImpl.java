@@ -169,8 +169,11 @@ public class SessionManagerImpl implements SessionManager
                 log.info("session " + sessionId + " have been closed!");
         	}   
         }
-       
         session = setSessionContent(ctx,wrapper,sessionId);
+        // 先给自己发送上线消息
+        MessageProto.Model onlineMsg = proxy.getSelfOnLineStateMsg(session.getAccount());
+        session.write(onlineMsg);
+
         addSession(session);
         return session;
     }

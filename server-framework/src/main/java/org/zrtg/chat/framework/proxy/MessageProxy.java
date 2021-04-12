@@ -26,6 +26,13 @@ public interface MessageProxy
      * @return
      */
     MessageProto.Model  getOnLineStateMsg(String sessionId);
+
+    /**
+     * 获取自己上线的消息
+     * @param sessionId
+     * @return
+     */
+    MessageProto.Model getSelfOnLineStateMsg(String sessionId);
     /**
      * 重连状态消息
      * @param sessionId

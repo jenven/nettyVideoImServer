@@ -1,5 +1,6 @@
 package org.zrtg.chat.test;
 
+import com.alibaba.fastjson.JSON;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -18,6 +19,9 @@ import org.zrtg.chat.test.data.MessageData;
 public class ChatClientHandler  extends ChannelInboundHandlerAdapter
 {
     private final static Logger logger = LoggerFactory.getLogger(ChatClientHandler.class);
+
+    private String sessionId;
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object o) throws Exception {
         MessageProto.Model message = (MessageProto.Model) o;
@@ -26,7 +30,16 @@ public class ChatClientHandler  extends ChannelInboundHandlerAdapter
             ctx.channel().writeAndFlush(new MessageData().generateHeartbeat());
             System.out.println("------------心跳检测--------------"+message);
         }else if(message.getCmd()==Constants.CmdType.ONLINE){
-            System.out.println(message.getSender()+"------------上线了--------------");
+
+            if (message.getSender().equals(message.getReceiver())){
+                this.sessionId = message.getSender();
+                System.out.println("------------你已上线了--------------");
+            }else{
+                if (this.sessionId.isEmpty() || !this.sessionId.equals(message.getSender())){
+                    System.out.println(message.getSender()+"------------上线了--------------");
+                }
+            }
+
         }else if(message.getCmd()==Constants.CmdType.RECON){
             System.out.println(message.getSender()+"------------重新连接--------------");
         }else if(message.getCmd()==Constants.CmdType.OFFLINE){

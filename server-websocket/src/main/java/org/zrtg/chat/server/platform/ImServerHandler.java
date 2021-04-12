@@ -122,10 +122,6 @@ public class ImServerHandler  extends ChannelInboundHandlerAdapter{
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.warn("ImServerHandler (" + ImUtils.getRemoteAddress(ctx) + ") -> Unexpected exception from downstream." + cause);
-        String sessionId = connertor.getChannelSessionId(ctx);
-        if (!sessionId.isEmpty()){
-            connertor.removeUnAuthSessionId(sessionId);
-        }
     }
 
 

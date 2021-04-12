@@ -9,14 +9,12 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.MessageWrapper;
 import org.zrtg.chat.common.model.proto.MessageProto;
 import org.zrtg.chat.common.utils.ImUtils;
 import org.zrtg.chat.framework.proxy.MessageProxy;
 import org.zrtg.chat.server.connertor.impl.ImConnertorImpl;
-import org.zrtg.chat.server.platform.ImServerHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -121,10 +119,6 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.warn("ImWebSocketServerHandler (" + ImUtils.getRemoteAddress(ctx) + ") -> Unexpected exception from downstream." + cause);
-        String sessionId = connertor.getChannelSessionId(ctx);
-        if (!sessionId.isEmpty()){
-            connertor.removeUnAuthSessionId(sessionId);
-        }
     }
 
 

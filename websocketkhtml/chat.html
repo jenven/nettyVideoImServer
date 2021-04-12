@@ -17,7 +17,7 @@
    <script src="js/websocketconfig.js"></script> 
    <script>
        var sendMsgFrame = document.getElementById("msg");
-	   var currentsession = "123456789";
+	   var currentsession = "";
 	   
 	   function send() {
           var text = document.getElementById("text").value
@@ -60,6 +60,11 @@
                            message1.setMsgtype(4);
                            socket.send(message1.serializeBinary());
               	       }else if(msg.getCmd()==3){
+
+              	       	  if (msg.getSender() == msg.getReceiver()){
+							  currentsession = msg.getSender();
+							  sendMsgFrame.innerHTML += "<br>" + "你已上线了";
+						  }
               	    	  if(msg.getSender()!=currentsession){
 						      sendMsgFrame.innerHTML += "<br>" + "用户"+msg.getSender()+"上线了";
               	    	  } 
