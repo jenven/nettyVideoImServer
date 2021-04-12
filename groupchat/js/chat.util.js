@@ -181,10 +181,10 @@ $(document).ready(function(){
                 if(msg.getCmd()==2){
                     console.log("响应心跳")
                     //发送心跳回应
-                  var message1 = new proto.Model();
-                  message1.setCmd(2);
-                  message1.setMsgtype(4);
-                  CHAT.socket.send(message1.serializeBinary());
+                    var message1 = new proto.Model();
+                    message1.setCmd(2);
+                    message1.setMsgtype(4);
+                    CHAT.socket.send(message1.serializeBinary());
                 }else if(msg.getCmd()==3){
                     if (msg.getSender() == msg.getReceiver()){
                         currentsession = msg.getSender();
