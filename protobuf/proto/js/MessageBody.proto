@@ -8,5 +8,6 @@ message MessageBody {
 	 string extend = 5;//扩展字段
 	 string username = 6;//消息发送人名称
      string nickname = 7;//消息发送人昵称
+     string avatar = 8;//消息发送人头像
 }
  

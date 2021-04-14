@@ -82,6 +82,7 @@ $(document).ready(function(){
                 content.setContent(sendMessage.html().replace(/\n/ig,"<br/>"));
                 content.setUsername(CHAT.nickname);
                 content.setNickname(CHAT.nickname);
+				content.setAvatar("images/photos/tony.jpg");
                 content.setType(0);
                 message.setContent(content.serializeBinary())
 		    	CHAT.socket.send(message.serializeBinary());
@@ -109,7 +110,8 @@ $(document).ready(function(){
                 content.setType(3);
                 content.setUsername(CHAT.nickname);
                 content.setNickname(CHAT.nickname);
-                message.setContent(content.serializeBinary())
+				content.setAvatar("images/photos/tony.jpg");
+                message.setContent(content.serializeBinary());
 		    	CHAT.socket.send(message.serializeBinary());
 		    	$("#send-message").focus();
 		    } else {
@@ -206,7 +208,7 @@ $(document).ready(function(){
                        var label = (isme ? '' : ('<span class="label">' + name +'</span>'));
                        var content = msgCon.getContent();
                        var contentDiv = '<div>' + label + '<span class="content">' + content + '</span></div>';
-                       var photoUrl = 'images/photos/tony.jpg';
+                       var photoUrl = msgCon.getAvatar();
                        var photoDiv = '<span><img class="photo" src="' + photoUrl + '"/></span>';
                        var section = document.createElement('section');
                        if (isme) {

@@ -72,7 +72,8 @@ proto.MessageBody.toObject = function(includeInstance, msg) {
     type: jspb.Message.getFieldWithDefault(msg, 4, 0),
     extend: jspb.Message.getFieldWithDefault(msg, 5, ""),
     username: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    nickname: jspb.Message.getFieldWithDefault(msg, 7, "")
+    nickname: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    avatar: jspb.Message.getFieldWithDefault(msg, 8, "")
   };
 
   if (includeInstance) {
@@ -136,6 +137,10 @@ proto.MessageBody.deserializeBinaryFromReader = function(msg, reader) {
     case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setNickname(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAvatar(value);
       break;
     default:
       reader.skipField();
@@ -212,6 +217,13 @@ proto.MessageBody.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       7,
+      f
+    );
+  }
+  f = message.getAvatar();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
       f
     );
   }
@@ -320,6 +332,21 @@ proto.MessageBody.prototype.getNickname = function() {
 /** @param {string} value */
 proto.MessageBody.prototype.setNickname = function(value) {
   jspb.Message.setField(this, 7, value);
+};
+
+
+/**
+ * optional string avatar = 8;
+ * @return {string}
+ */
+proto.MessageBody.prototype.getAvatar = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/** @param {string} value */
+proto.MessageBody.prototype.setAvatar = function(value) {
+  jspb.Message.setField(this, 8, value);
 };
 
 

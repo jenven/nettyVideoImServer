@@ -134,6 +134,24 @@ public final class MessageBodyProto {
      */
     com.google.protobuf.ByteString
         getNicknameBytes();
+
+    /**
+     * <pre>
+     *消息发送人头像
+     * </pre>
+     *
+     * <code>string avatar = 8;</code>
+     */
+    String getAvatar();
+    /**
+     * <pre>
+     *消息发送人头像
+     * </pre>
+     *
+     * <code>string avatar = 8;</code>
+     */
+    com.google.protobuf.ByteString
+        getAvatarBytes();
   }
   /**
    * Protobuf type {@code org.zrtg.chat.common.model.proto.MessageBody}
@@ -155,6 +173,7 @@ public final class MessageBodyProto {
       extend_ = "";
       username_ = "";
       nickname_ = "";
+      avatar_ = "";
     }
 
     @Override
@@ -224,6 +243,12 @@ public final class MessageBodyProto {
               String s = input.readStringRequireUtf8();
 
               nickname_ = s;
+              break;
+            }
+            case 66: {
+              String s = input.readStringRequireUtf8();
+
+              avatar_ = s;
               break;
             }
           }
@@ -515,6 +540,48 @@ public final class MessageBodyProto {
       }
     }
 
+    public static final int AVATAR_FIELD_NUMBER = 8;
+    private volatile Object avatar_;
+    /**
+     * <pre>
+     *消息发送人头像
+     * </pre>
+     *
+     * <code>string avatar = 8;</code>
+     */
+    public String getAvatar() {
+      Object ref = avatar_;
+      if (ref instanceof String) {
+        return (String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        String s = bs.toStringUtf8();
+        avatar_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     *消息发送人头像
+     * </pre>
+     *
+     * <code>string avatar = 8;</code>
+     */
+    public com.google.protobuf.ByteString
+        getAvatarBytes() {
+      Object ref = avatar_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (String) ref);
+        avatar_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -548,6 +615,9 @@ public final class MessageBodyProto {
       if (!getNicknameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 7, nickname_);
       }
+      if (!getAvatarBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 8, avatar_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -577,6 +647,9 @@ public final class MessageBodyProto {
       }
       if (!getNicknameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, nickname_);
+      }
+      if (!getAvatarBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, avatar_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -608,6 +681,8 @@ public final class MessageBodyProto {
           .equals(other.getUsername());
       result = result && getNickname()
           .equals(other.getNickname());
+      result = result && getAvatar()
+          .equals(other.getAvatar());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -633,6 +708,8 @@ public final class MessageBodyProto {
       hash = (53 * hash) + getUsername().hashCode();
       hash = (37 * hash) + NICKNAME_FIELD_NUMBER;
       hash = (53 * hash) + getNickname().hashCode();
+      hash = (37 * hash) + AVATAR_FIELD_NUMBER;
+      hash = (53 * hash) + getAvatar().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -776,6 +853,8 @@ public final class MessageBodyProto {
 
         nickname_ = "";
 
+        avatar_ = "";
+
         return this;
       }
 
@@ -805,6 +884,7 @@ public final class MessageBodyProto {
         result.extend_ = extend_;
         result.username_ = username_;
         result.nickname_ = nickname_;
+        result.avatar_ = avatar_;
         onBuilt();
         return result;
       }
@@ -871,6 +951,10 @@ public final class MessageBodyProto {
         }
         if (!other.getNickname().isEmpty()) {
           nickname_ = other.nickname_;
+          onChanged();
+        }
+        if (!other.getAvatar().isEmpty()) {
+          avatar_ = other.avatar_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -1471,6 +1555,95 @@ public final class MessageBodyProto {
         onChanged();
         return this;
       }
+
+      private Object avatar_ = "";
+      /**
+       * <pre>
+       *消息发送人头像
+       * </pre>
+       *
+       * <code>string avatar = 8;</code>
+       */
+      public String getAvatar() {
+        Object ref = avatar_;
+        if (!(ref instanceof String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          String s = bs.toStringUtf8();
+          avatar_ = s;
+          return s;
+        } else {
+          return (String) ref;
+        }
+      }
+      /**
+       * <pre>
+       *消息发送人头像
+       * </pre>
+       *
+       * <code>string avatar = 8;</code>
+       */
+      public com.google.protobuf.ByteString
+          getAvatarBytes() {
+        Object ref = avatar_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (String) ref);
+          avatar_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       *消息发送人头像
+       * </pre>
+       *
+       * <code>string avatar = 8;</code>
+       */
+      public Builder setAvatar(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        avatar_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *消息发送人头像
+       * </pre>
+       *
+       * <code>string avatar = 8;</code>
+       */
+      public Builder clearAvatar() {
+        
+        avatar_ = getDefaultInstance().getAvatar();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       *消息发送人头像
+       * </pre>
+       *
+       * <code>string avatar = 8;</code>
+       */
+      public Builder setAvatarBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        avatar_ = value;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return super.setUnknownFieldsProto3(unknownFields);
@@ -1535,11 +1708,11 @@ public final class MessageBodyProto {
   static {
     String[] descriptorData = {
       "\n\034proto/java/MessageBody.proto\022 org.zrtg" +
-      ".chat.common.model.proto\"}\n\013MessageBody\022" +
-      "\r\n\005title\030\001 \001(\t\022\017\n\007content\030\002 \001(\t\022\014\n\004time\030" +
-      "\003 \001(\t\022\014\n\004type\030\004 \001(\r\022\016\n\006extend\030\005 \001(\t\022\020\n\010u" +
-      "sername\030\006 \001(\t\022\020\n\010nickname\030\007 \001(\tB\022B\020Messa" +
-      "geBodyProtob\006proto3"
+      ".chat.common.model.proto\"\215\001\n\013MessageBody" +
+      "\022\r\n\005title\030\001 \001(\t\022\017\n\007content\030\002 \001(\t\022\014\n\004time" +
+      "\030\003 \001(\t\022\014\n\004type\030\004 \001(\r\022\016\n\006extend\030\005 \001(\t\022\020\n\010" +
+      "username\030\006 \001(\t\022\020\n\010nickname\030\007 \001(\t\022\016\n\006avat" +
+      "ar\030\010 \001(\tB\022B\020MessageBodyProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1558,7 +1731,7 @@ public final class MessageBodyProto {
     internal_static_org_zrtg_chat_common_model_proto_MessageBody_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_zrtg_chat_common_model_proto_MessageBody_descriptor,
-        new String[] { "Title", "Content", "Time", "Type", "Extend", "Username", "Nickname", });
+        new String[] { "Title", "Content", "Time", "Type", "Extend", "Username", "Nickname", "Avatar", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
