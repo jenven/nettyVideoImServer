@@ -225,6 +225,11 @@ $(document).ready(function(){
                     }else if(msgCon.getType() === 2){//纯表情
 
                     }else if(msgCon.getType() === 3){//鲜花
+						if (msgCon.getNickname() == CHAT.nickname){
+							addSystemTip(msgCon.getContent().replace(CHAT.nickname,"你"));
+						}else{
+							addSystemTip(msgCon.getContent());
+						}
                        //鲜花特效
 					    $(document).snowfall('clear');
 					    $(document).snowfall({
