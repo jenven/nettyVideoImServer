@@ -14,6 +14,7 @@ import org.zrtg.chat.common.domain.UserMessageEntity;
 import org.zrtg.chat.common.model.MessageWrapper;
 import org.zrtg.chat.common.model.proto.MessageBodyProto;
 import org.zrtg.chat.common.model.proto.MessageProto;
+import org.zrtg.chat.common.model.proto.MessageRoomProto;
 import org.zrtg.chat.common.rebot.proxy.RebotProxy;
 import org.zrtg.chat.common.service.IUserMessageService;
 import org.zrtg.chat.framework.proxy.MessageProxy;
@@ -78,7 +79,24 @@ public class MessageProxyImpl implements MessageProxy
 		            } catch (Exception e) {
 		                e.printStackTrace();
 		            }
-				break;  
+				break;
+			case  Constants.CmdType.JOINROOM://加入直播间
+
+			case Constants.CmdType.RECEIVEVIDEOFROM://收到视频消息
+
+			case Constants.CmdType.LEAVEROOM://离开直播间
+
+			case Constants.CmdType.ONICECANDIDATE:// 媒体协商消息
+				try {
+					MessageProto.Model.Builder  result = MessageProto.Model.newBuilder(message);
+					result.setTimeStamp(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+					result.setSender(sessionId);//存入发送人sessionId
+					message =  MessageProto.Model.parseFrom(result.build().toByteArray());
+					return new MessageWrapper(MessageWrapper.MessageProtocol.GROUP_CALL, sessionId, null,message);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
 		} 
         return null;
     }

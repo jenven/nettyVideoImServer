@@ -11,6 +11,10 @@ import org.zrtg.chat.common.utils.SpringUtils;
 import org.zrtg.chat.framework.config.properties.DruidProperties;
 
 /**
+ *  <pre>
+ *      -Dkms.url=ws://192.168.10.10:58888/kurento
+ *  </pre>
+ *
  * @author wangq
  * @create_at 2021-4-8 15:53
  */
@@ -22,7 +26,7 @@ public class ChatServerApp
 {
 
     public static void main(String[] args) {
-
+        System.setProperty("kms.url","ws://127.0.0.1:8888/kurento");
         SpringApplication.run(ChatServerApp.class, args);
     }
 }

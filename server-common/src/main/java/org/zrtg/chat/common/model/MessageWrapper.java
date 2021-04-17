@@ -55,7 +55,7 @@ public class MessageWrapper implements Serializable {
     }
 
     public enum MessageProtocol {
-        CONNECT, CLOSE, HEART_BEAT, SEND,GROUP, NOTIFY, REPLY, ON_LINE,OFF_LINE
+        CONNECT, CLOSE, HEART_BEAT, SEND,GROUP, NOTIFY, REPLY, ON_LINE,OFF_LINE,GROUP_CALL
     }
 
     public boolean isGroup() {
@@ -93,7 +93,11 @@ public class MessageWrapper implements Serializable {
     public boolean isOffline() {
         return MessageProtocol.OFF_LINE.equals(this.protocol);
     }
-    
+
+    public boolean isGroupCall() {
+        return MessageProtocol.GROUP_CALL.equals(this.protocol);
+    }
+
  
 
     public void setProtocol(MessageProtocol protocol) {

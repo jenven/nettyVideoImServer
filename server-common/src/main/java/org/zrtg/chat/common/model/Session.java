@@ -3,14 +3,19 @@ package org.zrtg.chat.common.model;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 
+import com.google.gson.JsonObject;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
+import lombok.extern.slf4j.Slf4j;
 import org.directwebremoting.ScriptBuffer;
 import org.directwebremoting.ScriptSession;
+import org.kurento.client.*;
+import org.kurento.jsonrpc.JsonUtils;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.proto.MessageBodyProto;
 import org.zrtg.chat.common.model.proto.MessageProto;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.SocketAddress;
@@ -19,7 +24,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+@Slf4j
 public class Session   implements Serializable{
 
  
@@ -48,6 +55,51 @@ public class Session   implements Serializable{
 	private Double latitude;//维度
 	private String location;//位置
 	private int status;// 状态
+
+	private  MediaPipeline pipeline;
+
+	private  WebRtcEndpoint outgoingMedia;
+
+	private  ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
+
+	public MediaPipeline getPipeline()
+	{
+		return pipeline;
+	}
+
+	public void setPipeline(MediaPipeline pipeline)
+	{
+		this.pipeline = pipeline;
+		this.outgoingMedia =  new WebRtcEndpoint.Builder(pipeline).build();
+		this.outgoingMedia.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
+
+			@Override
+			public void onEvent(IceCandidateFoundEvent event) {
+				JsonObject response = new JsonObject();
+				response.addProperty("id", "iceCandidate");
+				response.addProperty("name", account);
+				response.add("candidate", JsonUtils.toJsonObject(event.getCandidate()));
+				synchronized (session) {
+					session.write(response);
+				}
+			}
+		});
+	}
+
+	public WebRtcEndpoint getOutgoingMedia()
+	{
+		return outgoingMedia;
+	}
+
+
+
+	public ConcurrentMap<String, WebRtcEndpoint> getIncomingMedia()
+	{
+		return incomingMedia;
+	}
+
+
+
 	private Map<String,Session> sessions = new HashMap<String,Session>(); //用于dwr websocket存储多开页面创建的session
 
 	public void addSessions(Session session){
@@ -429,8 +481,100 @@ public class Session   implements Serializable{
         
 		return !fromOtherDevice(o);
 	}
- 
-	
+
+	public void receiveVideoFrom(Session sender, String sdpOffer) throws IOException {
+
+
+		log.trace("USER {}: SdpOffer  is {}",  sender.getAccount(), sdpOffer);
+
+		final String ipSdpAnswer = this.getEndpointForUser(sender).processOffer(sdpOffer);
+		final JsonObject scParams = new JsonObject();
+		scParams.addProperty("id", "receiveVideoAnswer");
+		scParams.addProperty("name", sender.getAccount());
+		scParams.addProperty("sdpAnswer", ipSdpAnswer);
+
+		log.trace("USER {}: SdpAnswer is {}",  sender.getAccount(), ipSdpAnswer);
+		this.write(scParams);
+		log.debug("gather candidates");
+		this.getEndpointForUser(sender).gatherCandidates();
+	}
+
+	public WebRtcEndpoint getOutgoingWebRtcPeer() {
+		return outgoingMedia;
+	}
+
+	private WebRtcEndpoint getEndpointForUser(final Session sender) {
+		if (sender.getAccount().equals(this.account)) {
+			log.debug("PARTICIPANT {}: configuring loopback", sender.getAccount());
+			return outgoingMedia;
+		}
+
+		log.debug("PARTICIPANT {}: receiving video from", sender.getAccount());
+
+		WebRtcEndpoint incoming = incomingMedia.get(sender.getAccount());
+		if (incoming == null) {
+			log.debug("PARTICIPANT {}: creating new endpoint for", sender.getAccount());
+			incoming = new WebRtcEndpoint.Builder(pipeline).build();
+
+			incoming.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
+
+				@Override
+				public void onEvent(IceCandidateFoundEvent event) {
+					JsonObject response = new JsonObject();
+					response.addProperty("id", "iceCandidate");
+					response.addProperty("name", sender.getAccount());
+					response.add("candidate", JsonUtils.toJsonObject(event.getCandidate()));
+					synchronized (session) {
+						session.write(response);
+					}
+				}
+			});
+
+			incomingMedia.put(sender.getAccount(), incoming);
+		}
+
+		log.debug("PARTICIPANT {}: obtained endpoint",  sender.getAccount());
+		sender.getOutgoingWebRtcPeer().connect(incoming);
+
+		return incoming;
+	}
+
+	public void cancelVideoFrom(final Session sender) {
+		this.cancelVideoFrom(sender.getAccount());
+	}
+
+	public void cancelVideoFrom(final String sessionid) {
+		log.debug("PARTICIPANT {}: canceling video reception from",  sessionid);
+		final WebRtcEndpoint incoming = incomingMedia.remove(sessionid);
+
+		log.debug("PARTICIPANT {}: removing endpoint ",  sessionid);
+		incoming.release(new Continuation<Void>() {
+			@Override
+			public void onSuccess(Void result) throws Exception {
+				log.trace("PARTICIPANT {}: Released successfully incoming EP"
+						, sessionid);
+			}
+
+			@Override
+			public void onError(Throwable cause) throws Exception {
+				log.warn("PARTICIPANT {}: Could not release incoming EP",
+						sessionid);
+			}
+		});
+	}
+
+
+	public void addCandidate(IceCandidate candidate, String sessionid) {
+		if (this.account.compareTo(sessionid) == 0) {
+			outgoingMedia.addIceCandidate(candidate);
+		} else {
+			WebRtcEndpoint webRtc = incomingMedia.get(sessionid);
+			if (webRtc != null) {
+				webRtc.addIceCandidate(candidate);
+			}
+		}
+	}
+
 	@Override
 	public String  toString(){
 		return  JSON.toJSONString(Session.this);

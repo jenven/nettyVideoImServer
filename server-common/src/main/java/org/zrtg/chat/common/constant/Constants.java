@@ -71,6 +71,7 @@ public class Constants
         byte RECEIVE = 2; //接收
         byte NOTIFY = 3; //通知
         byte REPLY = 4; //回复
+        byte GROUP_CALL = 5; // 群聊【视频】
     }
 
     public static interface CmdType{
@@ -80,6 +81,10 @@ public class Constants
         byte OFFLINE = 4; //下线
         byte MESSAGE = 5; //消息
         byte RECON = 6; //重连
+        byte JOINROOM = 7;//加入房间
+        byte RECEIVEVIDEOFROM = 8;// 加收视频信息
+        byte LEAVEROOM = 9;//离开房间
+        byte ONICECANDIDATE = 10;// 媒体协商
     }
 
 }

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message MessageRoom {
+	 string title = 1; //直播间名字
+	 string roomid = 2;//直播间id
+	 string time = 3;//发送时间
+	 uint32 type = 4;//0 文字   1 媒体协商数据
+	 string extend = 5;//扩展字段
+	 string username = 6;//消息发送人名称
+	 string nickname = 7;//消息发送人昵称
+	 string avatar = 8;//消息发送人头像
+}
+ 

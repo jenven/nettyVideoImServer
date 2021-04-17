@@ -5,7 +5,7 @@
  Source Server Type    : MySQL
  Source Server Version : 50717
  Source Host           : localhost:3306
- Source Schema         : qiqiim
+ Source Schema         : chat
 
  Target Server Type    : MySQL
  Target Server Version : 50717
@@ -16,60 +16,6 @@
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for user_account
--- ----------------------------
-DROP TABLE IF EXISTS `user_account`;
-CREATE TABLE `user_account`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '帐号',
-  `password` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码',
-  `disablestate` int(11) NULL DEFAULT NULL COMMENT '禁用状态（0 启用  1 禁用）',
-  `isdel` int(11) NULL DEFAULT NULL COMMENT '是否删除（0未删除1已删除）',
-  `createdate` datetime(0) NULL DEFAULT NULL COMMENT '创建日期',
-  `updatedate` datetime(0) NULL DEFAULT NULL COMMENT '修改日期',
-  `updateuser` bigint(20) NULL DEFAULT NULL COMMENT '修改人',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户帐号' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of user_account
--- ----------------------------
-INSERT INTO `user_account` VALUES (3, '1', '1', NULL, NULL, '2017-11-27 15:08:37', '2017-11-27 15:08:37', NULL);
-INSERT INTO `user_account` VALUES (4, '2', '2', 0, 0, '2017-11-27 18:00:14', '2017-11-27 18:00:14', NULL);
-INSERT INTO `user_account` VALUES (5, '3', '3', 0, 0, '2017-11-27 18:06:20', '2017-11-27 18:06:20', NULL);
-INSERT INTO `user_account` VALUES (6, '4', '4', 0, 0, '2017-11-27 18:12:11', '2017-11-27 18:12:11', NULL);
-INSERT INTO `user_account` VALUES (7, '5', '5', 0, 0, '2017-11-27 18:13:18', '2017-11-27 18:13:18', NULL);
-INSERT INTO `user_account` VALUES (8, '6', '6', 0, 0, '2017-11-27 18:13:58', '2017-11-27 18:13:58', NULL);
-INSERT INTO `user_account` VALUES (9, '7', '7', 0, 0, '2017-11-27 18:14:24', '2017-11-27 18:14:24', NULL);
-
--- ----------------------------
--- Table structure for user_department
--- ----------------------------
-DROP TABLE IF EXISTS `user_department`;
-CREATE TABLE `user_department`  (
-  `id` bigint(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '部门名称',
-  `count` int(11) NULL DEFAULT NULL COMMENT '部门人数',
-  `level` int(11) NULL DEFAULT NULL COMMENT '等级',
-  `parentid` bigint(20) NULL DEFAULT NULL COMMENT '上级部门ID',
-  `remark` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '备注',
-  `createdate` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `updatedate` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
-  `updateuser` bigint(50) NULL DEFAULT NULL COMMENT '修改人',
-  `isdel` int(11) NULL DEFAULT NULL COMMENT '是否删除（0否1是）',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部门' ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of user_department
--- ----------------------------
-INSERT INTO `user_department` VALUES (1, '总经办', NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `user_department` VALUES (2, '开发一部', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `user_department` VALUES (3, '开发二部', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO `user_department` VALUES (4, '财务部', NULL, NULL, 1, NULL, NULL, NULL, NULL, NULL);
-
 -- ----------------------------
 -- Table structure for user_info
 -- ----------------------------

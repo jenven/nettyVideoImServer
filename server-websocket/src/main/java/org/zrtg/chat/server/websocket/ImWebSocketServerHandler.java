@@ -13,8 +13,10 @@ import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.MessageWrapper;
 import org.zrtg.chat.common.model.proto.MessageProto;
 import org.zrtg.chat.common.utils.ImUtils;
+import org.zrtg.chat.common.utils.SpringUtils;
 import org.zrtg.chat.framework.proxy.MessageProxy;
 import org.zrtg.chat.server.connertor.impl.ImConnertorImpl;
+import org.zrtg.chat.server.handler.GroupVideoChatHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +26,8 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
 	private final static Logger log = LoggerFactory.getLogger(ImWebSocketServerHandler.class);
     private ImConnertorImpl connertor = null;
     private MessageProxy proxy = null;
+
+    private GroupVideoChatHandler groupVideoChatHandler = SpringUtils.getBean(GroupVideoChatHandler.class);
 
     public ImWebSocketServerHandler(MessageProxy proxy, ImConnertorImpl connertor) {
         this.connertor = connertor;
@@ -78,6 +82,13 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
                         receiveMessages(ctx, wrapper);
                     }
 
+                }
+                if (message.getMsgtype() == Constants.ProtobufType.GROUP_CALL){//直播间消息
+                    log.info("直播间消息:{}",sessionId);
+                    MessageWrapper wrapper = proxy.convertToMessageWrapper(sessionId, message);
+                    if (wrapper != null){
+                        receiveMessages(ctx, wrapper);
+                    }
                 }
 	        } catch (Exception e) {
 	            log.error("ImWebSocketServerHandler channerRead error.", e);
@@ -146,7 +157,13 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
         	connertor.pushMessage(wrapper);
         } else if (wrapper.isReply()) {
         	connertor.pushMessage(wrapper.getSessionId(),wrapper);
-        }  
+        }  else if (wrapper.isGroupCall()){
+            if (groupVideoChatHandler == null){
+                log.error("groupVideoChatHandler not init");
+            }else {
+                groupVideoChatHandler.handleGroupChatMessage(wrapper.getSessionId(),wrapper);
+            }
+        }
     }
 
     private class ConnectionTerminator implements Runnable{

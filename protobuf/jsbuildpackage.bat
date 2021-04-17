@@ -1,3 +1,2 @@
- 
-browserify .\proto\js\build\MessageBodyExport.js > .\proto\js\build\messagebody.js && browserify .\proto\js\build\MessageExport.js > .\proto\js\build\message.js
+browserify .\proto\js\build\MessageBodyExport.js > .\proto\js\build\messagebody.js && browserify .\proto\js\build\MessageRoomExport.js > .\proto\js\build\messageroom.js && browserify .\proto\js\build\MessageCandidateExport.js > .\proto\js\build\messagecandidate.js && browserify .\proto\js\build\MessageExport.js > .\proto\js\build\message.js
 pause
