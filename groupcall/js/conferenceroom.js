@@ -181,6 +181,7 @@ function onNewParticipant(request) {
 }
 
 function receiveVideoResponse(msg,result) {
+	console.info('receiveVideoResponse:'+ result.getExtend());
 	participants[msg.getSender()].rtcPeer.processAnswer (result.getExtend(), function (error) {
 		if (error) return console.error (error);
 	});
@@ -209,8 +210,8 @@ function onExistingParticipants(msg) {
 		}
 	};
 	console.log(name + " registered in room " + room);
-	var participant = new Participant(name);
-	participants[name] = participant;
+	var participant = new Participant(currentsession);
+	participants[currentsession] = participant;
 	var video = participant.getVideoElement();
 
 	var options = {
@@ -230,9 +231,22 @@ function onExistingParticipants(msg) {
 }
 
 function leaveRoom() {
-	sendMessage({
-		id : 'leaveRoom'
-	});
+
+	var message = new proto.Model();
+	var roomComent = new proto.MessageRoom();
+
+	message.setMsgtype(5);//房间消息
+	message.setCmd(9);//离开房间消息
+	message.setGroupid("0");//系统用户组
+	message.setToken(currentsession);
+	message.setSender(currentsession);
+	roomComent.setRoomid(room);
+	roomComent.setExtend(name+"离开房间!");
+	roomComent.setType(0);
+	roomComent.setUsername(name);
+	roomComent.setNickname(name);
+	message.setContent(roomComent.serializeBinary());
+	sendMessage(message);
 
 	for ( var key in participants) {
 		participants[key].dispose();

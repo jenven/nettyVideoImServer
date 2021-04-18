@@ -82,7 +82,7 @@ public class Constants
         byte MESSAGE = 5; //消息
         byte RECON = 6; //重连
         byte JOINROOM = 7;//加入房间
-        byte RECEIVEVIDEOFROM = 8;// 加收视频信息
+        byte RECEIVEVIDEOFROM = 8;// 接收视频信息
         byte LEAVEROOM = 9;//离开房间
         byte ONICECANDIDATE = 10;// 媒体协商
         byte NEWPARTICIPANTARRIVED =11;// 新的协商数据

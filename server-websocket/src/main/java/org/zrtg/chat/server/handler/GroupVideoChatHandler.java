@@ -60,6 +60,7 @@ public class GroupVideoChatHandler
 
             }
         }catch(Exception e){
+            e.printStackTrace();
             throw new RuntimeException(e.getCause());
         }
     }
@@ -70,7 +71,7 @@ public class GroupVideoChatHandler
         MessageCandidateProto.MessageCandidate messageCandidate = MessageCandidateProto.MessageCandidate.parseFrom(msg.getContent());
         if (messageCandidate != null){
             IceCandidate cand = new IceCandidate(messageCandidate.getCandidate(),
-                    messageCandidate.getSdpMid(),Integer.parseInt(messageCandidate.getSdpMLineIndex()));
+                    messageCandidate.getSdpMid(),messageCandidate.getSdpMLineIndex());
             session.addCandidate(cand,session.getAccount());
         }
     }

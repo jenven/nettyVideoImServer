@@ -89,7 +89,7 @@ public class Session   implements Serializable{
 				MessageCandidateProto.MessageCandidate.Builder candidate = MessageCandidateProto.MessageCandidate.newBuilder();
 				candidate.setCandidate(event.getCandidate().getCandidate());
 				candidate.setSdpMid(event.getCandidate().getSdpMid());
-				candidate.setSdpMLineIndex(String.valueOf(event.getCandidate().getSdpMLineIndex()));
+				candidate.setSdpMLineIndex(event.getCandidate().getSdpMLineIndex());
 
 				builder.setContent(candidate.build().toByteString());
 				synchronized (session) {
@@ -589,7 +589,7 @@ public class Session   implements Serializable{
 					MessageCandidateProto.MessageCandidate.Builder candidate = MessageCandidateProto.MessageCandidate.newBuilder();
 					candidate.setCandidate(event.getCandidate().getCandidate());
 					candidate.setSdpMid(event.getCandidate().getSdpMid());
-					candidate.setSdpMLineIndex(String.valueOf(event.getCandidate().getSdpMLineIndex()));
+					candidate.setSdpMLineIndex(event.getCandidate().getSdpMLineIndex());
 
 					builder.setContent(candidate.build().toByteString());
 

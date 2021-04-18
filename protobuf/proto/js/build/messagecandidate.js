@@ -68,7 +68,7 @@ proto.MessageCandidate.toObject = function(includeInstance, msg) {
   var f, obj = {
     candidate: jspb.Message.getFieldWithDefault(msg, 1, ""),
     sdpmid: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    sdpmlineindex: jspb.Message.getFieldWithDefault(msg, 3, "")
+    sdpmlineindex: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -114,7 +114,7 @@ proto.MessageCandidate.deserializeBinaryFromReader = function(msg, reader) {
       msg.setSdpmid(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {number} */ (reader.readUint32());
       msg.setSdpmlineindex(value);
       break;
     default:
@@ -161,8 +161,8 @@ proto.MessageCandidate.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getSdpmlineindex();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0) {
+    writer.writeUint32(
       3,
       f
     );
@@ -201,15 +201,15 @@ proto.MessageCandidate.prototype.setSdpmid = function(value) {
 
 
 /**
- * optional string sdpMLineIndex = 3;
- * @return {string}
+ * optional uint32 sdpMLineIndex = 3;
+ * @return {number}
  */
 proto.MessageCandidate.prototype.getSdpmlineindex = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
-/** @param {string} value */
+/** @param {number} value */
 proto.MessageCandidate.prototype.setSdpmlineindex = function(value) {
   jspb.Message.setField(this, 3, value);
 };

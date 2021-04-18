@@ -3,6 +3,6 @@ syntax = "proto3";
 message MessageCandidate {
 	 string candidate = 1; //协商数据
 	 string sdpMid = 2;// sdpMid
-	 string sdpMLineIndex = 3;//sdpMLineIndex
+	 uint32 sdpMLineIndex = 3;//sdpMLineIndex
 }
  

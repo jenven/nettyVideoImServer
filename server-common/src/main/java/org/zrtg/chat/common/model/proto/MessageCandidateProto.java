@@ -59,18 +59,9 @@ public final class MessageCandidateProto {
      *sdpMLineIndex
      * </pre>
      *
-     * <code>string sdpMLineIndex = 3;</code>
+     * <code>uint32 sdpMLineIndex = 3;</code>
      */
-    String getSdpMLineIndex();
-    /**
-     * <pre>
-     *sdpMLineIndex
-     * </pre>
-     *
-     * <code>string sdpMLineIndex = 3;</code>
-     */
-    com.google.protobuf.ByteString
-        getSdpMLineIndexBytes();
+    int getSdpMLineIndex();
   }
   /**
    * Protobuf type {@code org.zrtg.chat.common.model.proto.MessageCandidate}
@@ -87,7 +78,7 @@ public final class MessageCandidateProto {
     private MessageCandidate() {
       candidate_ = "";
       sdpMid_ = "";
-      sdpMLineIndex_ = "";
+      sdpMLineIndex_ = 0;
     }
 
     @Override
@@ -130,10 +121,9 @@ public final class MessageCandidateProto {
               sdpMid_ = s;
               break;
             }
-            case 26: {
-              String s = input.readStringRequireUtf8();
+            case 24: {
 
-              sdpMLineIndex_ = s;
+              sdpMLineIndex_ = input.readUInt32();
               break;
             }
           }
@@ -245,45 +235,16 @@ public final class MessageCandidateProto {
     }
 
     public static final int SDPMLINEINDEX_FIELD_NUMBER = 3;
-    private volatile Object sdpMLineIndex_;
+    private int sdpMLineIndex_;
     /**
      * <pre>
      *sdpMLineIndex
      * </pre>
      *
-     * <code>string sdpMLineIndex = 3;</code>
+     * <code>uint32 sdpMLineIndex = 3;</code>
      */
-    public String getSdpMLineIndex() {
-      Object ref = sdpMLineIndex_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        sdpMLineIndex_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     *sdpMLineIndex
-     * </pre>
-     *
-     * <code>string sdpMLineIndex = 3;</code>
-     */
-    public com.google.protobuf.ByteString
-        getSdpMLineIndexBytes() {
-      Object ref = sdpMLineIndex_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (String) ref);
-        sdpMLineIndex_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public int getSdpMLineIndex() {
+      return sdpMLineIndex_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -304,8 +265,8 @@ public final class MessageCandidateProto {
       if (!getSdpMidBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sdpMid_);
       }
-      if (!getSdpMLineIndexBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, sdpMLineIndex_);
+      if (sdpMLineIndex_ != 0) {
+        output.writeUInt32(3, sdpMLineIndex_);
       }
       unknownFields.writeTo(output);
     }
@@ -321,8 +282,9 @@ public final class MessageCandidateProto {
       if (!getSdpMidBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sdpMid_);
       }
-      if (!getSdpMLineIndexBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, sdpMLineIndex_);
+      if (sdpMLineIndex_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(3, sdpMLineIndex_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -344,8 +306,8 @@ public final class MessageCandidateProto {
           .equals(other.getCandidate());
       result = result && getSdpMid()
           .equals(other.getSdpMid());
-      result = result && getSdpMLineIndex()
-          .equals(other.getSdpMLineIndex());
+      result = result && (getSdpMLineIndex()
+          == other.getSdpMLineIndex());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -362,7 +324,7 @@ public final class MessageCandidateProto {
       hash = (37 * hash) + SDPMID_FIELD_NUMBER;
       hash = (53 * hash) + getSdpMid().hashCode();
       hash = (37 * hash) + SDPMLINEINDEX_FIELD_NUMBER;
-      hash = (53 * hash) + getSdpMLineIndex().hashCode();
+      hash = (53 * hash) + getSdpMLineIndex();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -496,7 +458,7 @@ public final class MessageCandidateProto {
 
         sdpMid_ = "";
 
-        sdpMLineIndex_ = "";
+        sdpMLineIndex_ = 0;
 
         return this;
       }
@@ -572,9 +534,8 @@ public final class MessageCandidateProto {
           sdpMid_ = other.sdpMid_;
           onChanged();
         }
-        if (!other.getSdpMLineIndex().isEmpty()) {
-          sdpMLineIndex_ = other.sdpMLineIndex_;
-          onChanged();
+        if (other.getSdpMLineIndex() != 0) {
+          setSdpMLineIndex(other.getSdpMLineIndex());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -781,59 +742,26 @@ public final class MessageCandidateProto {
         return this;
       }
 
-      private Object sdpMLineIndex_ = "";
+      private int sdpMLineIndex_ ;
       /**
        * <pre>
        *sdpMLineIndex
        * </pre>
        *
-       * <code>string sdpMLineIndex = 3;</code>
+       * <code>uint32 sdpMLineIndex = 3;</code>
        */
-      public String getSdpMLineIndex() {
-        Object ref = sdpMLineIndex_;
-        if (!(ref instanceof String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          String s = bs.toStringUtf8();
-          sdpMLineIndex_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
+      public int getSdpMLineIndex() {
+        return sdpMLineIndex_;
       }
       /**
        * <pre>
        *sdpMLineIndex
        * </pre>
        *
-       * <code>string sdpMLineIndex = 3;</code>
+       * <code>uint32 sdpMLineIndex = 3;</code>
        */
-      public com.google.protobuf.ByteString
-          getSdpMLineIndexBytes() {
-        Object ref = sdpMLineIndex_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (String) ref);
-          sdpMLineIndex_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       *sdpMLineIndex
-       * </pre>
-       *
-       * <code>string sdpMLineIndex = 3;</code>
-       */
-      public Builder setSdpMLineIndex(
-          String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      public Builder setSdpMLineIndex(int value) {
+        
         sdpMLineIndex_ = value;
         onChanged();
         return this;
@@ -843,29 +771,11 @@ public final class MessageCandidateProto {
        *sdpMLineIndex
        * </pre>
        *
-       * <code>string sdpMLineIndex = 3;</code>
+       * <code>uint32 sdpMLineIndex = 3;</code>
        */
       public Builder clearSdpMLineIndex() {
         
-        sdpMLineIndex_ = getDefaultInstance().getSdpMLineIndex();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *sdpMLineIndex
-       * </pre>
-       *
-       * <code>string sdpMLineIndex = 3;</code>
-       */
-      public Builder setSdpMLineIndexBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        sdpMLineIndex_ = value;
+        sdpMLineIndex_ = 0;
         onChanged();
         return this;
       }
@@ -935,7 +845,7 @@ public final class MessageCandidateProto {
       "\n!proto/java/MessageCandidate.proto\022 org" +
       ".zrtg.chat.common.model.proto\"L\n\020Message" +
       "Candidate\022\021\n\tcandidate\030\001 \001(\t\022\016\n\006sdpMid\030\002" +
-      " \001(\t\022\025\n\rsdpMLineIndex\030\003 \001(\tB\027B\025MessageCa" +
+      " \001(\t\022\025\n\rsdpMLineIndex\030\003 \001(\rB\027B\025MessageCa" +
       "ndidateProtob\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
