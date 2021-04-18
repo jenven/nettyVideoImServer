@@ -633,9 +633,12 @@ public class Session   implements Serializable{
 
 
 	public void addCandidate(IceCandidate candidate, String sessionid) {
+
 		if (this.account.compareTo(sessionid) == 0) {
+			log.info("outgoingMedia:{}",sessionid);
 			outgoingMedia.addIceCandidate(candidate);
 		} else {
+			log.info("incomingMedia:{}",sessionid);
 			WebRtcEndpoint webRtc = incomingMedia.get(sessionid);
 			if (webRtc != null) {
 				webRtc.addIceCandidate(candidate);

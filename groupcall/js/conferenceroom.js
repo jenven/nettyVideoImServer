@@ -122,7 +122,14 @@ ws.onmessage = function(e) {
 
 		}else if (msg.getCmd()  === 10){//onicecandidate
 			var messageCandidate = proto.MessageCandidate.deserializeBinary(msg.getContent());
-			participants[msg.getSender()].rtcPeer.addIceCandidate(messageCandidate.getCandidate(), function (error) {
+
+			var candidate = {
+				candidate: messageCandidate.getCandidate(),
+				sdpMid: messageCandidate.getSdpmid(),
+				sdpMLineIndex : messageCandidate.getSdpmlineindex()
+			};
+
+			participants[msg.getSender()].rtcPeer.addIceCandidate(candidate, function (error) {
 				if (error) {
 					console.error("Error adding candidate: " + error);
 					return;
@@ -181,7 +188,8 @@ function onNewParticipant(request) {
 }
 
 function receiveVideoResponse(msg,result) {
-	console.info('receiveVideoResponse:'+ result.getExtend());
+	console.info('receiveVideoResponse session:'+ msg.getSender());
+	console.info('receiveVideoResponse sdpAnswer:'+ result.getExtend());
 	participants[msg.getSender()].rtcPeer.processAnswer (result.getExtend(), function (error) {
 		if (error) return console.error (error);
 	});
@@ -209,16 +217,15 @@ function onExistingParticipants(msg) {
 			}
 		}
 	};
-	console.log(name + " registered in room " + room);
+	console.log(currentsession+":"+ name + " registered in room " + room);
 	var participant = new Participant(currentsession);
 	participants[currentsession] = participant;
 	var video = participant.getVideoElement();
-
 	var options = {
 	      localVideo: video,
 	      mediaConstraints: constraints,
 	      onicecandidate: participant.onIceCandidate.bind(participant)
-	    }
+	    };
 	participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
 		function (error) {
 		  if(error) {
@@ -285,6 +292,6 @@ function onParticipantLeft(request) {
 }
 
 function sendMessage(message) {
-	console.log(currentsession);
+	console.log('Sending message: ' + message);
 	ws.send(message.serializeBinary());
 }

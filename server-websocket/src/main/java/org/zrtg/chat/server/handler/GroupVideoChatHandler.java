@@ -1,5 +1,6 @@
 package org.zrtg.chat.server.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.extern.slf4j.Slf4j;
@@ -45,15 +46,19 @@ public class GroupVideoChatHandler
             MessageProto.Model  msg =  (MessageProto.Model)wrapper.getBody();
             switch (msg.getCmd()){
                 case  Constants.CmdType.JOINROOM://加入直播间
+                    log.info("加入直播间 session:{}", sessionId);
                     joinRoom(msg, session);
                     break;
                 case Constants.CmdType.RECEIVEVIDEOFROM://收到视频消息
+                    log.info("收到视频消息 session:{}", sessionId);
                     dealReciveVideo(msg,session);
                     break;
                 case Constants.CmdType.LEAVEROOM://离开直播间
+                    log.info("离开直播间 session:{}", sessionId);
                     leaveRoom(session);
                     break;
                 case Constants.CmdType.ONICECANDIDATE:// 媒体协商消息
+                    log.info("媒体协商消息 session:{}", sessionId);
                     dealOnIceCandidate(msg,session);
                     break;
                 default:
@@ -72,6 +77,8 @@ public class GroupVideoChatHandler
         if (messageCandidate != null){
             IceCandidate cand = new IceCandidate(messageCandidate.getCandidate(),
                     messageCandidate.getSdpMid(),messageCandidate.getSdpMLineIndex());
+            log.info("IceCandidate:{}", JSON.toJSONString(cand));
+
             session.addCandidate(cand,session.getAccount());
         }
     }
@@ -86,12 +93,23 @@ public class GroupVideoChatHandler
    {
        MessageRoomProto.MessageRoom  msgConten =   MessageRoomProto.MessageRoom.parseFrom(msg.getContent());
        if (msgConten !=null){
+           log.info("处理视频消息 session:{}", session.getAccount());
            String senderSessionid = msg.getSender();
            if (!"".equals(senderSessionid)){
                final Session sender = registry.getBySessionId(senderSessionid);
                final String sdpOffer = msgConten.getExtend();
-               session.receiveVideoFrom(sender, sdpOffer);
+               if (sender ==null){
+                   log.error("处理视频消息失败：sender 未找到");
+               }else {
+                   log.info("开始处理视频消息 session:{}", session.getAccount());
+                   session.receiveVideoFrom(sender, sdpOffer);
+               }
+
+           }else {
+               log.error("处理视频消息失败：senderSessionid 为空");
            }
+       }else{
+           log.error("处理视频消息失败：sdpOffer 为空");
        }
    }
 

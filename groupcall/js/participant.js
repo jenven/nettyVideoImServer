@@ -75,6 +75,7 @@ function Participant(name) {
 	this.offerToReceiveVideo = function(error, offerSdp, wp){
 		if (error) return console.error ("sdp offer error")
 		console.log('Invoking SDP offer callback function');
+		console.log('offerSdp: '+offerSdp);
 
 		var message = new proto.Model();
 		var messageRoom = new proto.MessageRoom();
