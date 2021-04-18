@@ -8,6 +8,8 @@ import org.kurento.client.Continuation;
 import org.kurento.client.MediaPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zrtg.chat.common.constant.Constants;
+import org.zrtg.chat.common.model.proto.*;
 
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
@@ -61,20 +63,28 @@ public class Room implements Closeable
 
     public void sendParticipantNames(Session user) throws IOException {
 
-        final JsonArray participantsArray = new JsonArray();
+
+        MessageRoomSessionProto.MessageRoomSession.Builder msg =  MessageRoomSessionProto.MessageRoomSession.newBuilder();
+
+        int count = 0;
         for (final Session participant : this.getParticipants()) {
-            if (!participant.equals(user)) {
-                final JsonElement participantName = new JsonPrimitive(participant.getAccount());
-                participantsArray.add(participantName);
+            if (!participant.getAccount().equals(user.getAccount())) {
+                count++;
+                msg.addSessions(participant.getAccount());
             }
         }
 
-        final JsonObject existingParticipantsMsg = new JsonObject();
-        existingParticipantsMsg.addProperty("id", "existingParticipants");
-        existingParticipantsMsg.add("data", participantsArray);
-        log.debug("PARTICIPANT {}: sending a list of {} participants", user.getAccount(),
-                participantsArray.size());
-        user.write(existingParticipantsMsg);
+
+        log.debug("PARTICIPANT {}: sending a list of {} participants", user.getAccount(), count);
+
+        MessageProto.Model.Builder builder = MessageProto.Model.newBuilder();
+        builder.setCmd(Constants.CmdType.EXISTINGPARTICIPANTS);
+        builder.setSender(user.getAccount());
+        builder.setMsgtype(Constants.ProtobufType.GROUP_CALL);
+        builder.setToken(user.getAccount());
+        builder.setContent(msg.build().toByteString());
+
+        user.write(builder);
     }
 
 
@@ -88,16 +98,23 @@ public class Room implements Closeable
 
         newParticipant.setPipeline(this.pipeline);
 
-        final JsonObject newParticipantMsg = new JsonObject();
-        newParticipantMsg.addProperty("id", "newParticipantArrived");
-        newParticipantMsg.addProperty("name", newParticipant.getAccount());
+        MessageProto.Model.Builder builder = MessageProto.Model.newBuilder();
+        builder.setCmd(Constants.CmdType.NEWPARTICIPANTARRIVED);
+        builder.setSender(newParticipant.getAccount());
+        builder.setMsgtype(Constants.ProtobufType.GROUP_CALL);
+        builder.setToken(newParticipant.getAccount());
+        MessageRoomProto.MessageRoom.Builder msg =  MessageRoomProto.MessageRoom.newBuilder();
+        msg.setExtend("newParticipantArrived");
+        builder.setContent(msg.build().toByteString());
+
 
         final List<String> participantsList = new ArrayList<>(participants.values().size());
         log.debug("ROOM {}: notifying other participants of new participant {}", name,
                 newParticipant.getAccount());
 
         for (final Session participant : participants.values()) {
-            participant.write(newParticipantMsg);
+            builder.setReceiver(participant.getAccount());
+            participant.write(builder);
             participantsList.add(participant.getAccount());
         }
 
@@ -111,12 +128,21 @@ public class Room implements Closeable
         log.debug("ROOM {}: notifying all users that {} is leaving the room", this.name, sessionId);
 
         final List<String> unnotifiedParticipants = new ArrayList<>();
-        final JsonObject participantLeftJson = new JsonObject();
-        participantLeftJson.addProperty("id", "participantLeft");
-        participantLeftJson.addProperty("name", sessionId);
+
+        MessageProto.Model.Builder builder = MessageProto.Model.newBuilder();
+        builder.setCmd(Constants.CmdType.PARTICIPANTLEFT);
+        builder.setSender(sessionId);
+        builder.setMsgtype(Constants.ProtobufType.GROUP_CALL);
+        builder.setToken(sessionId);
+        MessageRoomProto.MessageRoom.Builder msg =  MessageRoomProto.MessageRoom.newBuilder();
+        msg.setExtend("participantLeft");
+        builder.setContent(msg.build().toByteString());
+
         for (final Session participant : participants.values()) {
+            builder.setReceiver(participant.getAccount());
+
             participant.cancelVideoFrom(sessionId);
-            participant.write(participantLeftJson);
+            participant.write(builder);
         }
 
         if (!unnotifiedParticipants.isEmpty()) {

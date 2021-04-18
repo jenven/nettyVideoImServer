@@ -114,39 +114,35 @@ ws.onmessage = function(e) {
 					window.clearTimeout(flowerTimer);
 				},5000);
 			}
+		}else if (msg.getCmd()  === 7){//joinroom
+
+		}else if (msg.getCmd()  === 8){//receivevideofrom
+
+		}else if (msg.getCmd()  === 9){//leaveroom
+
+		}else if (msg.getCmd()  === 10){//onicecandidate
+			var messageCandidate = proto.MessageCandidate.deserializeBinary(msg.getContent());
+			participants[msg.getSender()].rtcPeer.addIceCandidate(messageCandidate.getCandidate(), function (error) {
+				if (error) {
+					console.error("Error adding candidate: " + error);
+					return;
+				}
+			});
+		}else if (msg.getCmd()  === 11){//newparticipantarrived
+			onNewParticipant(msg);
+		}else if (msg.getCmd()  === 12){//receivevideoanswer
+			var messageRoom = proto.MessageRoom.deserializeBinary(msg.getContent());
+			receiveVideoResponse(msg,messageRoom);
+		}else if (msg.getCmd()  === 13){//participantleft
+			onParticipantLeft(msg);
+		}else if (msg.getCmd()  === 14){//existingParticipants
+			var messageRoomSession = proto.MessageRoomSession.deserializeBinary(msg.getContent());
+			onExistingParticipants(messageRoomSession);
 		}
 
 
 	}else{
 		console.log(e.data);
-	}
-	return;
-	var parsedMessage = JSON.parse(message.data);
-	console.info('Received message: ' + message.data);
-
-	switch (parsedMessage.id) {
-	case 'existingParticipants':
-		onExistingParticipants(parsedMessage);
-		break;
-	case 'newParticipantArrived':
-		onNewParticipant(parsedMessage);
-		break;
-	case 'participantLeft':
-		onParticipantLeft(parsedMessage);
-		break;
-	case 'receiveVideoAnswer':
-		receiveVideoResponse(parsedMessage);
-		break;
-	case 'iceCandidate':
-		participants[parsedMessage.name].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
-	        if (error) {
-		      console.error("Error adding candidate: " + error);
-		      return;
-	        }
-	    });
-	    break;
-	default:
-		console.error('Unrecognized message', parsedMessage);
 	}
 }
 
@@ -181,11 +177,11 @@ function register() {
 }
 
 function onNewParticipant(request) {
-	receiveVideo(request.name);
+	receiveVideo(request.getSender());
 }
 
-function receiveVideoResponse(result) {
-	participants[result.name].rtcPeer.processAnswer (result.sdpAnswer, function (error) {
+function receiveVideoResponse(msg,result) {
+	participants[msg.getSender()].rtcPeer.processAnswer (result.getExtend(), function (error) {
 		if (error) return console.error (error);
 	});
 }
@@ -230,7 +226,7 @@ function onExistingParticipants(msg) {
 		  this.generateOffer (participant.offerToReceiveVideo.bind(participant));
 	});
 
-	msg.data.forEach(receiveVideo);
+	msg.getSessionsList().forEach(receiveVideo);
 }
 
 function leaveRoom() {
@@ -268,10 +264,10 @@ function receiveVideo(sender) {
 }
 
 function onParticipantLeft(request) {
-	console.log('Participant ' + request.name + ' left');
-	var participant = participants[request.name];
+	console.log('Participant ' + request.getSender() + ' left');
+	var participant = participants[request.getSender()];
 	participant.dispose();
-	delete participants[request.name];
+	delete participants[request.getSender()];
 }
 
 function sendMessage(message) {

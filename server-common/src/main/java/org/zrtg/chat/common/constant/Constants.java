@@ -85,6 +85,11 @@ public class Constants
         byte RECEIVEVIDEOFROM = 8;// 加收视频信息
         byte LEAVEROOM = 9;//离开房间
         byte ONICECANDIDATE = 10;// 媒体协商
+        byte NEWPARTICIPANTARRIVED =11;// 新的协商数据
+        byte RECEIVEVIDEOANSWER =12;//回答协商结果
+        byte PARTICIPANTLEFT =13;//移除媒体
+        byte EXISTINGPARTICIPANTS =14;//已经存在的连接
+
     }
 
 }

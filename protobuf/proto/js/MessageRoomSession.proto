@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message MessageRoomSession {
+	repeated  string sessions = 1;//直播间已存在的session
+}
+ 

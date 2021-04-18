@@ -1,0 +1,8 @@
+syntax = "proto3";
+package org.zrtg.chat.common.model.proto;
+option java_outer_classname="MessageRoomSessionProto";
+ 
+message MessageRoomSession {
+	repeated  string sessions = 1;//直播间已存在的session
+}
+ 

@@ -13,7 +13,9 @@ import org.kurento.client.*;
 import org.kurento.jsonrpc.JsonUtils;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.proto.MessageBodyProto;
+import org.zrtg.chat.common.model.proto.MessageCandidateProto;
 import org.zrtg.chat.common.model.proto.MessageProto;
+import org.zrtg.chat.common.model.proto.MessageRoomProto;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -75,12 +77,23 @@ public class Session   implements Serializable{
 
 			@Override
 			public void onEvent(IceCandidateFoundEvent event) {
-				JsonObject response = new JsonObject();
-				response.addProperty("id", "iceCandidate");
-				response.addProperty("name", account);
-				response.add("candidate", JsonUtils.toJsonObject(event.getCandidate()));
+				log.info("通知页面iceCandidate:{}",account);
+
+				MessageProto.Model.Builder builder = MessageProto.Model.newBuilder();
+				builder.setCmd(Constants.CmdType.ONICECANDIDATE);
+				builder.setSender(account);
+				builder.setReceiver(account);
+				builder.setMsgtype(Constants.ProtobufType.GROUP_CALL);
+				builder.setToken(account);
+
+				MessageCandidateProto.MessageCandidate.Builder candidate = MessageCandidateProto.MessageCandidate.newBuilder();
+				candidate.setCandidate(event.getCandidate().getCandidate());
+				candidate.setSdpMid(event.getCandidate().getSdpMid());
+				candidate.setSdpMLineIndex(String.valueOf(event.getCandidate().getSdpMLineIndex()));
+
+				builder.setContent(candidate.build().toByteString());
 				synchronized (session) {
-					session.write(response);
+					session.write(builder);
 				}
 			}
 		});
@@ -420,6 +433,43 @@ public class Session   implements Serializable{
 	
  
 	public void close() {
+
+		log.debug("PARTICIPANT {}: Releasing resources", this.account);
+		for (final String remoteParticipantName : incomingMedia.keySet()) {
+
+			log.trace("PARTICIPANT {}: Released incoming EP for {}", this.account, remoteParticipantName);
+
+			final WebRtcEndpoint ep = this.incomingMedia.get(remoteParticipantName);
+
+			ep.release(new Continuation<Void>() {
+
+				@Override
+				public void onSuccess(Void result) throws Exception {
+					log.trace("PARTICIPANT Released successfully incoming EP for {}",
+							remoteParticipantName);
+				}
+
+				@Override
+				public void onError(Throwable cause) throws Exception {
+					log.warn("PARTICIPANT  Could not release incoming EP for {}",
+							remoteParticipantName);
+				}
+			});
+		}
+
+		outgoingMedia.release(new Continuation<Void>() {
+
+			@Override
+			public void onSuccess(Void result) throws Exception {
+				log.trace("PARTICIPANT Released outgoing EP");
+			}
+
+			@Override
+			public void onError(Throwable cause) throws Exception {
+				log.warn("USER  Could not release outgoing EP");
+			}
+		});
+
 		if(session!=null){
 			session.close();
 		}else if(dwrsession!=null){
@@ -484,17 +534,25 @@ public class Session   implements Serializable{
 
 	public void receiveVideoFrom(Session sender, String sdpOffer) throws IOException {
 
+		log.info("USER {}: connecting with {} ", account, sender.getAccount());
 
-		log.trace("USER {}: SdpOffer  is {}",  sender.getAccount(), sdpOffer);
+		log.trace("USER {}: SdpOffer for {} is {}", account,sender.getAccount(), sdpOffer);
 
 		final String ipSdpAnswer = this.getEndpointForUser(sender).processOffer(sdpOffer);
-		final JsonObject scParams = new JsonObject();
-		scParams.addProperty("id", "receiveVideoAnswer");
-		scParams.addProperty("name", sender.getAccount());
-		scParams.addProperty("sdpAnswer", ipSdpAnswer);
 
-		log.trace("USER {}: SdpAnswer is {}",  sender.getAccount(), ipSdpAnswer);
-		this.write(scParams);
+		MessageProto.Model.Builder builder = MessageProto.Model.newBuilder();
+		builder.setCmd(Constants.CmdType.RECEIVEVIDEOANSWER);
+		builder.setSender(sender.getAccount());
+		builder.setReceiver(account);
+		builder.setMsgtype(Constants.ProtobufType.GROUP_CALL);
+		builder.setToken(account);
+		MessageRoomProto.MessageRoom.Builder messageBody = MessageRoomProto.MessageRoom.newBuilder();
+		messageBody.setExtend(ipSdpAnswer);
+		builder.setContent(messageBody.build().toByteString());
+
+
+		log.trace("USER {}: SdpAnswerfor {} is {}", account, sender.getAccount(),ipSdpAnswer);
+		this.write(builder);
 		log.debug("gather candidates");
 		this.getEndpointForUser(sender).gatherCandidates();
 	}
@@ -505,35 +563,45 @@ public class Session   implements Serializable{
 
 	private WebRtcEndpoint getEndpointForUser(final Session sender) {
 		if (sender.getAccount().equals(this.account)) {
-			log.debug("PARTICIPANT {}: configuring loopback", sender.getAccount());
+			log.debug("PARTICIPANT {}: configuring loopback", this.account);
 			return outgoingMedia;
 		}
 
-		log.debug("PARTICIPANT {}: receiving video from", sender.getAccount());
+		log.debug("PARTICIPANT {}: receiving video from {}", this.account, sender.getAccount());
 
 		WebRtcEndpoint incoming = incomingMedia.get(sender.getAccount());
 		if (incoming == null) {
-			log.debug("PARTICIPANT {}: creating new endpoint for", sender.getAccount());
+			log.debug("PARTICIPANT {}: creating new endpoint for {}", this.account, sender.getAccount());
 			incoming = new WebRtcEndpoint.Builder(pipeline).build();
 
 			incoming.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
 				@Override
 				public void onEvent(IceCandidateFoundEvent event) {
-					JsonObject response = new JsonObject();
-					response.addProperty("id", "iceCandidate");
-					response.addProperty("name", sender.getAccount());
-					response.add("candidate", JsonUtils.toJsonObject(event.getCandidate()));
+
+					MessageProto.Model.Builder builder = MessageProto.Model.newBuilder();
+					builder.setCmd(Constants.CmdType.ONICECANDIDATE);
+					builder.setSender(sender.getAccount());
+					builder.setReceiver(account);
+					builder.setMsgtype(Constants.ProtobufType.GROUP_CALL);
+					builder.setToken(account);
+
+					MessageCandidateProto.MessageCandidate.Builder candidate = MessageCandidateProto.MessageCandidate.newBuilder();
+					candidate.setCandidate(event.getCandidate().getCandidate());
+					candidate.setSdpMid(event.getCandidate().getSdpMid());
+					candidate.setSdpMLineIndex(String.valueOf(event.getCandidate().getSdpMLineIndex()));
+
+					builder.setContent(candidate.build().toByteString());
+
 					synchronized (session) {
-						session.write(response);
+						session.write(builder);
 					}
 				}
 			});
 
 			incomingMedia.put(sender.getAccount(), incoming);
 		}
-
-		log.debug("PARTICIPANT {}: obtained endpoint",  sender.getAccount());
+		log.debug("PARTICIPANT {}: obtained endpoint for {}", this.account, sender.getAccount());
 		sender.getOutgoingWebRtcPeer().connect(incoming);
 
 		return incoming;
@@ -544,20 +612,20 @@ public class Session   implements Serializable{
 	}
 
 	public void cancelVideoFrom(final String sessionid) {
-		log.debug("PARTICIPANT {}: canceling video reception from",  sessionid);
+
+		log.debug("PARTICIPANT {}: canceling video reception from {}", this.account, sessionid);
 		final WebRtcEndpoint incoming = incomingMedia.remove(sessionid);
 
-		log.debug("PARTICIPANT {}: removing endpoint ",  sessionid);
+		log.debug("PARTICIPANT {}: removing endpoint endpoint for {}",  this.account, sessionid);
 		incoming.release(new Continuation<Void>() {
 			@Override
 			public void onSuccess(Void result) throws Exception {
-				log.trace("PARTICIPANT {}: Released successfully incoming EP"
-						, sessionid);
+				log.trace("PARTICIPANT Released successfully incoming EP for {}", sessionid);
 			}
 
 			@Override
 			public void onError(Throwable cause) throws Exception {
-				log.warn("PARTICIPANT {}: Could not release incoming EP",
+				log.warn("PARTICIPANT Could not release incoming  EP for {}",
 						sessionid);
 			}
 		});
