@@ -532,17 +532,24 @@ public class Session   implements Serializable{
 		return !fromOtherDevice(o);
 	}
 
+	/**
+	 * 请求方向所有视频接收方发送 SdpOffer
+	 * 响应方根据 SdpOffer 向请求方请求响应，最后将响应结果发送回接收方
+	 * @param sender
+	 * @param sdpOffer
+	 * @throws IOException
+	 */
 	public void receiveVideoFrom(Session sender, String sdpOffer) throws IOException {
 
 		log.info("USER {}: connecting with {} ", account, sender.getAccount());
 
 		log.trace("USER {}: SdpOffer for {} is {}", account,sender.getAccount(), sdpOffer);
-
+		// 获取 请求方的 SdpOffer 响应
 		final String ipSdpAnswer = this.getEndpointForUser(sender).processOffer(sdpOffer);
 
 		MessageProto.Model.Builder builder = MessageProto.Model.newBuilder();
 		builder.setCmd(Constants.CmdType.RECEIVEVIDEOANSWER);
-		builder.setSender(sender.getAccount());
+		builder.setSender(sender.getAccount());//必须设置为请求方的标志
 		builder.setReceiver(account);
 		builder.setMsgtype(Constants.ProtobufType.GROUP_CALL);
 		builder.setToken(account);
