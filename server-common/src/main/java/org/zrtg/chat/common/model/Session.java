@@ -93,7 +93,7 @@ public class Session   implements Serializable{
 
 				builder.setContent(candidate.build().toByteString());
 				synchronized (session) {
-					session.write(builder);
+					session.writeAndFlush(builder).awaitUninterruptibly(5000);;
 				}
 			}
 		});
@@ -594,7 +594,7 @@ public class Session   implements Serializable{
 					builder.setContent(candidate.build().toByteString());
 
 					synchronized (session) {
-						session.write(builder);
+						session.writeAndFlush(builder).awaitUninterruptibly(5000);
 					}
 				}
 			});
