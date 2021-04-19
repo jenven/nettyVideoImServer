@@ -434,10 +434,10 @@ public class Session   implements Serializable{
  
 	public void close() {
 
-		log.info("PARTICIPANT {}: Releasing resources", this.account);
+		log.debug("PARTICIPANT {}: Releasing resources", this.account);
 		for (final String remoteParticipantName : incomingMedia.keySet()) {
 
-			log.info("PARTICIPANT {}: Released incoming EP for {}", this.account, remoteParticipantName);
+			log.trace("PARTICIPANT {}: Released incoming EP for {}", this.account, remoteParticipantName);
 
 			final WebRtcEndpoint ep = this.incomingMedia.get(remoteParticipantName);
 
@@ -445,13 +445,13 @@ public class Session   implements Serializable{
 
 				@Override
 				public void onSuccess(Void result) throws Exception {
-					log.info("PARTICIPANT Released successfully incoming EP for {}",
+					log.trace("PARTICIPANT Released successfully incoming EP for {}",
 							remoteParticipantName);
 				}
 
 				@Override
 				public void onError(Throwable cause) throws Exception {
-					log.info("PARTICIPANT  Could not release incoming EP for {}",
+					log.trace("PARTICIPANT  Could not release incoming EP for {}",
 							remoteParticipantName);
 				}
 			});
@@ -461,12 +461,12 @@ public class Session   implements Serializable{
 
 			@Override
 			public void onSuccess(Void result) throws Exception {
-				log.info("PARTICIPANT Released outgoing EP");
+				log.trace("PARTICIPANT Released outgoing EP");
 			}
 
 			@Override
 			public void onError(Throwable cause) throws Exception {
-				log.info("USER  Could not release outgoing EP");
+				log.trace("USER  Could not release outgoing EP");
 			}
 		});
 
@@ -536,7 +536,7 @@ public class Session   implements Serializable{
 
 		log.info("USER {}: connecting with {} ", account, sender.getAccount());
 
-		log.info("USER {}: SdpOffer for {} is {}", account,sender.getAccount(), sdpOffer);
+		log.trace("USER {}: SdpOffer for {} is {}", account,sender.getAccount(), sdpOffer);
 
 		final String ipSdpAnswer = this.getEndpointForUser(sender).processOffer(sdpOffer);
 
@@ -551,9 +551,9 @@ public class Session   implements Serializable{
 		builder.setContent(messageBody.build().toByteString());
 
 
-		log.info("USER {}: SdpAnswerfor {} is {}", account, sender.getAccount(),ipSdpAnswer);
+		log.trace("USER {}: SdpAnswerfor {} is {}", account, sender.getAccount(),ipSdpAnswer);
 		this.write(builder);
-		log.info("gather candidates");
+		log.debug("gather candidates");
 		this.getEndpointForUser(sender).gatherCandidates();
 	}
 
@@ -563,15 +563,15 @@ public class Session   implements Serializable{
 
 	private WebRtcEndpoint getEndpointForUser(final Session sender) {
 		if (sender.getAccount().equals(this.account)) {
-			log.info("PARTICIPANT {}: configuring loopback", this.account);
+			log.debug("PARTICIPANT {}: configuring loopback", this.account);
 			return outgoingMedia;
 		}
 
-		log.info("PARTICIPANT {}: receiving video from {}", this.account, sender.getAccount());
+		log.debug("PARTICIPANT {}: receiving video from {}", this.account, sender.getAccount());
 
 		WebRtcEndpoint incoming = incomingMedia.get(sender.getAccount());
 		if (incoming == null) {
-			log.info("PARTICIPANT {}: creating new endpoint for {}", this.account, sender.getAccount());
+			log.debug("PARTICIPANT {}: creating new endpoint for {}", this.account, sender.getAccount());
 			incoming = new WebRtcEndpoint.Builder(pipeline).build();
 
 			incoming.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
@@ -601,7 +601,7 @@ public class Session   implements Serializable{
 
 			incomingMedia.put(sender.getAccount(), incoming);
 		}
-		log.info("PARTICIPANT {}: obtained endpoint for {}", this.account, sender.getAccount());
+		log.debug("PARTICIPANT {}: obtained endpoint for {}", this.account, sender.getAccount());
 		sender.getOutgoingWebRtcPeer().connect(incoming);
 
 		return incoming;
@@ -613,20 +613,19 @@ public class Session   implements Serializable{
 
 	public void cancelVideoFrom(final String sessionid) {
 
-		log.info("PARTICIPANT {}: canceling video reception from {}", this.account, sessionid);
+		log.debug("PARTICIPANT {}: canceling video reception from {}", this.account, sessionid);
 		final WebRtcEndpoint incoming = incomingMedia.remove(sessionid);
 
-		log.info("PARTICIPANT {}: removing endpoint endpoint for {}",  this.account, sessionid);
+		log.debug("PARTICIPANT {}: removing endpoint endpoint for {}",  this.account, sessionid);
 		incoming.release(new Continuation<Void>() {
 			@Override
 			public void onSuccess(Void result) throws Exception {
-				log.info("PARTICIPANT Released successfully incoming EP for {}", sessionid);
+				log.trace("PARTICIPANT Released successfully incoming EP");
 			}
 
 			@Override
 			public void onError(Throwable cause) throws Exception {
-				log.info("PARTICIPANT Could not release incoming  EP for {}",
-						sessionid);
+				log.trace("PARTICIPANT Could not release incoming  EP");
 			}
 		});
 	}
@@ -635,10 +634,10 @@ public class Session   implements Serializable{
 	public void addCandidate(IceCandidate candidate, String sessionid) {
 
 		if (this.account.compareTo(sessionid) == 0) {
-			log.info("outgoingMedia:{}",sessionid);
+			log.debug("outgoingMedia:{}",sessionid);
 			outgoingMedia.addIceCandidate(candidate);
 		} else {
-			log.info("incomingMedia:{}",sessionid);
+			log.debug("incomingMedia:{}",sessionid);
 			WebRtcEndpoint webRtc = incomingMedia.get(sessionid);
 			if (webRtc != null) {
 				webRtc.addIceCandidate(candidate);

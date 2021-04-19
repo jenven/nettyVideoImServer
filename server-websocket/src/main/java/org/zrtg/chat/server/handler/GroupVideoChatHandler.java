@@ -39,8 +39,8 @@ public class GroupVideoChatHandler
 
 
     public void  handleGroupChatMessage(String sessionId, MessageWrapper wrapper){
-        log.info("处理直播间消息");
         try{
+            //当前连接用户session
             Session session =  sessionManager.getSession(sessionId);
 
             MessageProto.Model  msg =  (MessageProto.Model)wrapper.getBody();
@@ -74,6 +74,7 @@ public class GroupVideoChatHandler
     {
         Session session =  sessionManager.getSession(sessionId);
         if (session !=null){
+            registry.removeBySession(sessionId);
             leaveRoom(session);
         }
     }
@@ -85,7 +86,6 @@ public class GroupVideoChatHandler
         if (messageCandidate != null){
             IceCandidate cand = new IceCandidate(messageCandidate.getCandidate(),
                     messageCandidate.getSdpMid(),messageCandidate.getSdpMLineIndex());
-            log.info("IceCandidate:{}", JSON.toJSONString(cand));
 
             session.addCandidate(cand,session.getAccount());
         }
@@ -101,7 +101,6 @@ public class GroupVideoChatHandler
    {
        MessageRoomProto.MessageRoom  msgConten =   MessageRoomProto.MessageRoom.parseFrom(msg.getContent());
        if (msgConten !=null){
-           log.info("处理视频消息 session:{}", session.getAccount());
            String senderSessionid = msg.getSender();
            if (!"".equals(senderSessionid)){
                final Session sender = registry.getBySessionId(senderSessionid);
@@ -109,7 +108,7 @@ public class GroupVideoChatHandler
                if (sender ==null){
                    log.error("处理视频消息失败：sender 未找到");
                }else {
-                   log.info("开始处理视频消息 session:{}", session.getAccount());
+                   log.info("开始处理视频消息 session:{} receiveVideoFrom ：{}", session.getAccount(),senderSessionid);
                    session.receiveVideoFrom(sender, sdpOffer);
                }
 

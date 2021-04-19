@@ -265,6 +265,7 @@ function leaveRoom() {
 }
 
 function receiveVideo(sender) {
+	console.log("receiveVideo: "+ sender);
 	var participant = new Participant(sender);
 	participants[sender] = participant;
 	var video = participant.getVideoElement();

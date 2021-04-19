@@ -88,8 +88,12 @@ public class MessageProxyImpl implements MessageProxy
 
 			case Constants.CmdType.ONICECANDIDATE:// 媒体协商消息
 				try {
+
 					MessageProto.Model.Builder  result = MessageProto.Model.newBuilder(message);
 					result.setTimeStamp(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+					if (message.getCmd() ==Constants.CmdType.RECEIVEVIDEOFROM ){
+						sessionId = result.getSender();
+					}
 					result.setSender(sessionId);//存入发送人sessionId
 					message =  MessageProto.Model.parseFrom(result.build().toByteArray());
 					return new MessageWrapper(MessageWrapper.MessageProtocol.GROUP_CALL, sessionId, null,message);

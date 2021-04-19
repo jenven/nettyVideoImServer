@@ -64,7 +64,7 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
 	protected void channelRead0(ChannelHandlerContext ctx, MessageProto.Model message)
 			throws Exception {
 
-          log.info("websocket server recive message:{}",message);
+          log.info("websocket server recive message  cmd:{}",message.getCmd());
 		  try {
 			   String sessionId = connertor.getChannelSessionId(ctx);
                 // inbound
@@ -164,7 +164,9 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
             if (groupVideoChatHandler == null){
                 log.error("groupVideoChatHandler not init");
             }else {
-                groupVideoChatHandler.handleGroupChatMessage(wrapper.getSessionId(),wrapper);
+                //当前连接的sessionid
+                String sessionId = connertor.getChannelSessionId(hander);
+                groupVideoChatHandler.handleGroupChatMessage(sessionId,wrapper);
             }
         }
     }

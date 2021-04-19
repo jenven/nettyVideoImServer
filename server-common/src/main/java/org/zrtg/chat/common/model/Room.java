@@ -89,7 +89,7 @@ public class Room implements Closeable
 
 
     public void leave(Session user) throws IOException {
-        log.info("PARTICIPANT {}: Leaving room {}", user.getAccount(), this.name);
+        log.debug("PARTICIPANT {}: Leaving room {}", user.getAccount(), this.name);
         this.removeParticipant(user.getAccount());
         user.close();
     }
@@ -109,7 +109,7 @@ public class Room implements Closeable
 
 
         final List<String> participantsList = new ArrayList<>(participants.values().size());
-        log.info("ROOM {}: notifying other participants of new participant {}", name,
+        log.debug("ROOM {}: notifying other participants of new participant {}", name,
                 newParticipant.getAccount());
 
         for (final Session participant : participants.values()) {
@@ -125,7 +125,7 @@ public class Room implements Closeable
     private void removeParticipant(String sessionId) throws IOException {
         participants.remove(sessionId);
 
-        log.info("ROOM {}: notifying all users that {} is leaving the room", this.name, sessionId);
+        log.debug("ROOM {}: notifying all users that {} is leaving the room", this.name, sessionId);
 
         final List<String> unnotifiedParticipants = new ArrayList<>();
 
@@ -139,6 +139,7 @@ public class Room implements Closeable
         builder.setContent(msg.build().toByteString());
 
         for (final Session participant : participants.values()) {
+            log.debug("notifying {} that {} is leaving the room",participant.getAccount(),sessionId);
             builder.setReceiver(participant.getAccount());
 
             participant.cancelVideoFrom(sessionId);
@@ -146,7 +147,7 @@ public class Room implements Closeable
         }
 
         if (!unnotifiedParticipants.isEmpty()) {
-            log.info("ROOM {}: The users {} could not be notified that {} left the room", this.name,
+            log.debug("ROOM {}: The users {} could not be notified that {} left the room", this.name,
                     unnotifiedParticipants, name);
         }
 
@@ -175,15 +176,15 @@ public class Room implements Closeable
 
             @Override
             public void onSuccess(Void result) throws Exception {
-                log.info("ROOM {}: Released Pipeline", Room.this.name);
+                log.debug("ROOM {}: Released Pipeline", Room.this.name);
             }
 
             @Override
             public void onError(Throwable cause) throws Exception {
-                log.info("PARTICIPANT {}: Could not release Pipeline", Room.this.name);
+                log.warn("PARTICIPANT {}: Could not release Pipeline", Room.this.name);
             }
         });
 
-        log.info("Room {} closed", this.name);
+        log.debug("Room {} closed", this.name);
     }
 }
