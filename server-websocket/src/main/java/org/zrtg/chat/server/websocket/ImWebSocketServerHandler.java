@@ -124,7 +124,9 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
         log.debug("ImWebSocketServerHandler channelInactive from (" + ImUtils.getRemoteAddress(ctx) + ")");
         String sessionId = connertor.getChannelSessionId(ctx);
         log.debug("ImWebSocketServerHandler channel sessionId (" + sessionId + ")");
+        groupVideoChatHandler.leaveRoom(sessionId);
         receiveMessages(ctx,new MessageWrapper(MessageWrapper.MessageProtocol.CLOSE, sessionId,null, null));
+
     }
 
     @Override
@@ -149,6 +151,7 @@ public class ImWebSocketServerHandler   extends SimpleChannelInboundHandler<Mess
        	    connertor.connect(hander, wrapper); 
         } else if (wrapper.isClose()) {
         	connertor.close(hander,wrapper);
+
         } else if (wrapper.isHeartbeat()) {
         	connertor.heartbeatToClient(hander,wrapper);
         }else if (wrapper.isGroup()) {

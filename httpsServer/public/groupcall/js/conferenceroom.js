@@ -15,7 +15,7 @@
  *
  */
 
-var ws = new WebSocket('ws://192.168.10.10:1314/ws');
+var ws = new WebSocket('wss://192.168.10.10:1314/ws');
 ws.binaryType = "arraybuffer";
 var participants = {};
 var name;
@@ -188,8 +188,7 @@ function onNewParticipant(request) {
 }
 
 function receiveVideoResponse(msg,result) {
-	console.info('receiveVideoResponse session:'+ msg.getSender());
-	console.info('receiveVideoResponse sdpAnswer:'+ result.getExtend());
+
 	participants[msg.getSender()].rtcPeer.processAnswer (result.getExtend(), function (error) {
 		if (error) return console.error (error);
 	});
@@ -292,6 +291,6 @@ function onParticipantLeft(request) {
 }
 
 function sendMessage(message) {
-	console.log('Sending message: ' + message);
+	console.log('Sending message');
 	ws.send(message.serializeBinary());
 }

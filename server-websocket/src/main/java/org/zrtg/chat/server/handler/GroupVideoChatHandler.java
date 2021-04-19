@@ -70,6 +70,14 @@ public class GroupVideoChatHandler
         }
     }
 
+    public void leaveRoom(String sessionId) throws IOException
+    {
+        Session session =  sessionManager.getSession(sessionId);
+        if (session !=null){
+            leaveRoom(session);
+        }
+    }
+
 
     private void dealOnIceCandidate(MessageProto.Model  msg, Session session) throws InvalidProtocolBufferException
     {
@@ -133,6 +141,7 @@ public class GroupVideoChatHandler
 
         String roomId = roomManager.getRoomIdBySession(user);
         if ("".equals(roomId)){
+            log.info("未找到房间信息");
             return;
         }
         Room room = roomManager.getRoom(roomId);

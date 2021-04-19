@@ -19,19 +19,26 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 import org.zrtg.chat.common.constant.Constants;
 import org.zrtg.chat.common.model.proto.MessageProto;
+import org.zrtg.chat.common.utils.SecureChatServerInitializer;
 import org.zrtg.chat.framework.proxy.MessageProxy;
 import org.zrtg.chat.server.connertor.impl.ImConnertorImpl;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import java.io.InputStream;
 import java.util.List;
 
 import static io.netty.buffer.Unpooled.wrappedBuffer;
@@ -68,7 +75,14 @@ public class ImWebsocketServer  {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
 	    		ChannelPipeline pipeline = ch.pipeline();
-	    		
+	    		// ssl协议
+                InputStream stream = getClass().getClassLoader().getResourceAsStream("keystore.jks");
+
+                SSLContext sslContext = SecureChatServerInitializer.createSSLContext("JKS",stream,"kurento");
+                SSLEngine engine = sslContext.createSSLEngine();
+                engine.setUseClientMode(false);
+
+                pipeline.addLast(new SslHandler(engine));
 	    		 // HTTP请求的解码和编码
 	            pipeline.addLast(new HttpServerCodec());
 	            // 把多个消息转换为一个单一的FullHttpRequest或是FullHttpResponse，

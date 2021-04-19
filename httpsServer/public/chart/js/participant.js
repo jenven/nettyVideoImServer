@@ -75,44 +75,23 @@ function Participant(name) {
 	this.offerToReceiveVideo = function(error, offerSdp, wp){
 		if (error) return console.error ("sdp offer error")
 		console.log('Invoking SDP offer callback function');
-		console.log('offerSdp: '+offerSdp);
-
-		var message = new proto.Model();
-		var messageRoom = new proto.MessageRoom();
-
-		message.setMsgtype(5);//房间消息
-		message.setCmd(8);//RECEIVEVIDEOFROM 接收视频信息
-		message.setGroupid("0");//系统用户组
-		message.setToken(name);
-		message.setSender(name);
-		messageRoom.setExtend(offerSdp);
-		message.setContent(messageRoom.serializeBinary());
-
-		sendMessage(message);
+		var msg =  { id : "receiveVideoFrom",
+				sender : name,
+				sdpOffer : offerSdp
+			};
+		sendMessage(msg);
 	}
 
 
 	this.onIceCandidate = function (candidate, wp) {
-		console.log("Local candidate:" + JSON.stringify(candidate));
-		//console.log("Local candidate candidate:" + candidate.candidate);
-		//console.log("Local candidate sdpmid:" + candidate.sdpMid);
-		//console.log("Local candidate sdpMLineIndex:" + candidate.sdpMLineIndex);
-		var message = new proto.Model();
-		var messageCandidate = new proto.MessageCandidate();
+		  console.log("Local candidate" + JSON.stringify(candidate));
 
-		message.setMsgtype(5);//房间消息
-		message.setCmd(10);//ONICECANDIDATE 媒体协商
-		message.setGroupid("0");//系统用户组
-		message.setToken(name);
-		message.setSender(name);
-		messageCandidate.setCandidate(candidate.candidate);
-		messageCandidate.setSdpmid(candidate.sdpMid);
-		messageCandidate.setSdpmlineindex(candidate.sdpMLineIndex);
-
-		message.setContent(messageCandidate.serializeBinary());
-
-
-		sendMessage(message);
+		  var message = {
+		    id: 'onIceCandidate',
+		    candidate: candidate,
+		    name: name
+		  };
+		  sendMessage(message);
 	}
 
 	Object.defineProperty(this, 'rtcPeer', { writable: true});
