@@ -37,7 +37,7 @@ public class Constants
         public static final int PING_TIME_OUT = 70; //秒   需大于空闲时间
 
         // 最大协议包长度
-        public static final int MAX_FRAME_LENGTH = 1024 * 10; // 10k
+        public static final int MAX_FRAME_LENGTH = 1024 * 10 * 10; // 10m
         //
         public static final int MAX_AGGREGATED_CONTENT_LENGTH = 65536;
 

@@ -188,7 +188,7 @@ function onNewParticipant(request) {
 }
 
 function receiveVideoResponse(msg,result) {
-
+    console.log("receiveVideoResponse : "+ msg.getSender());
 	participants[msg.getSender()].rtcPeer.processAnswer (result.getExtend(), function (error) {
 		if (error) return console.error (error);
 	});
@@ -206,6 +206,9 @@ function callResponse(message) {
 }
 
 function onExistingParticipants(msg) {
+
+    msg.getSessionsList().forEach(receiveVideo);
+
 	var constraints = {
 		audio : true,
 		video : {
@@ -233,7 +236,6 @@ function onExistingParticipants(msg) {
 		  this.generateOffer (participant.offerToReceiveVideo.bind(participant));
 	});
 
-	msg.getSessionsList().forEach(receiveVideo);
 }
 
 function leaveRoom() {
@@ -265,7 +267,7 @@ function leaveRoom() {
 }
 
 function receiveVideo(sender) {
-	console.log("receiveVideo: "+ sender);
+    console.log("receiveVideo from : "+ sender);
 	var participant = new Participant(sender);
 	participants[sender] = participant;
 	var video = participant.getVideoElement();
@@ -285,6 +287,7 @@ function receiveVideo(sender) {
 }
 
 function onParticipantLeft(request) {
+
 	console.log('Participant ' + request.getSender() + ' left');
 	var participant = participants[request.getSender()];
 	participant.dispose();
