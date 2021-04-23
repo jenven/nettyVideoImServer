@@ -13,10 +13,14 @@ var app = express();
 app.use(serveIndex('./public'));
 app.use(express.static('./public'));
 
+//var options = {
+//	key  : fs.readFileSync('./cert/1557605_www.learningrtc.cn.key'),
+//	cert : fs.readFileSync('./cert/1557605_www.learningrtc.cn.pem')
+//}
 var options = {
-	key  : fs.readFileSync('./cert/1557605_www.learningrtc.cn.key'),
-	cert : fs.readFileSync('./cert/1557605_www.learningrtc.cn.pem') 
-}
+    pfx: fs.readFileSync('./cert/keystore.pfx'),
+    passphrase:'kurento'
+};
 
 var https_server = https.createServer(options, app);
 https_server.listen(443, '0.0.0.0');
