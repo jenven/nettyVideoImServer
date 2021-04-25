@@ -82,11 +82,11 @@ public class MessageProxyImpl implements MessageProxy
 				break;
 			case  Constants.CmdType.JOINROOM://加入直播间
 
-			case Constants.CmdType.RECEIVEVIDEOFROM://收到视频消息
+			case Constants.CmdType.RECEIVEVIDEOFROM://收到视频消息-媒体协商
 
 			case Constants.CmdType.LEAVEROOM://离开直播间
 
-			case Constants.CmdType.ONICECANDIDATE:// 媒体协商消息
+			case Constants.CmdType.ONICECANDIDATE:// 建立端到服务器的连接
 				try {
 
 					MessageProto.Model.Builder  result = MessageProto.Model.newBuilder(message);

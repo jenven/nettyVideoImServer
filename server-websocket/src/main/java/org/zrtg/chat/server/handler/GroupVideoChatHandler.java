@@ -49,7 +49,7 @@ public class GroupVideoChatHandler
                     log.info("加入直播间 session:{}", sessionId);
                     joinRoom(msg, session);
                     break;
-                case Constants.CmdType.RECEIVEVIDEOFROM://收到视频消息
+                case Constants.CmdType.RECEIVEVIDEOFROM://收到视频消息--媒体协商
                     log.info("收到视频消息 session:{}", sessionId);
                     dealReciveVideo(msg,session);
                     break;
@@ -57,7 +57,7 @@ public class GroupVideoChatHandler
                     log.info("离开直播间 session:{}", sessionId);
                     leaveRoom(session);
                     break;
-                case Constants.CmdType.ONICECANDIDATE:// 媒体协商消息
+                case Constants.CmdType.ONICECANDIDATE:// 建立端到服务器的连接
                     log.info("媒体协商消息 session:{}", sessionId);
                     dealOnIceCandidate(msg,session);
                     break;
