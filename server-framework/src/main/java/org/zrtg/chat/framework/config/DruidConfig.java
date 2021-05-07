@@ -33,7 +33,6 @@ import java.util.Map;
 public class DruidConfig
 {
 
-
     @Bean
     @ConfigurationProperties("spring.datasource.druid.master")
     public DataSource masterDataSource(DruidProperties druidProperties)
