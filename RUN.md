@@ -98,3 +98,30 @@ These links contain the information needed to finish configuring your Kurento Me
 
 ### 4. 运行工程
 sudo mvn -U clean spring-boot:run     -Dspring-boot.run.jvmArguments="-Dkms.url=ws://127.0.0.1:8888/kurento"
+
+### 5. 在ubuntu18.0.4 上运行
+ 
+##### 5.1 服务器打包并上传到指定位置，运行：
+```shell script
+ java -jar  nettyChatServer.jar
+```
+##### 5.2 停掉php和nginx：
+```shell script
+ sudo service nginx stop
+
+ sudo service php7.2-fpm stop 
+
+```
+##### 5.3 运行页面服务器：
+```shell script
+cd /home/vagrant/code/webrtc/httpsServer
+
+node server.js  
+
+或
+ 
+forever start server.js
+
+```
+
+##### 5.4 Chrome浏览器打开： https://192.168.10.10
