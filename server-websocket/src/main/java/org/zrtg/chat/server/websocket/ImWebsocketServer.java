@@ -59,7 +59,7 @@ public class ImWebsocketServer  {
     private int port = 1314;
  
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
-    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup(10);
     private Channel channel;
 
     @PostConstruct
